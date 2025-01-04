@@ -1,233 +1,400 @@
-const prepLength = 45;
-const showerLength = 30;
-const getReadyLength = 30;
-const fluff = 15;
+import { hoursToMinutes, minutesToHour, convertToNumber, getDate } from "/static/js/conversions.js";
+
+const prepLength0 = 45;
+const showerLength0 = 30;
+const getReadyLength0 = 30;
+const fluff0 = 15;
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('wakeUp').addEventListener('click', function() {
+    var eventsContainer = document.getElementById('eventsContainer');
+    var defaultLengthButton = document.getElementById('defaultLength');
+    var signUpButton = document.getElementById('signUp');
+    var wakeUpButton = document.getElementById('wakeUp');
+    var getReadyButton = document.getElementById('getReady');
+    var driveButton = document.getElementById('drive');
+    var todayDate = getDate();
 
-        let userInput = storeInput();
-        calculateWakeUp(userInput);
-
-        function calculateWakeUp({ taskName, arriveTime, driveTime }) {
-                
-            // Turn Arrive Time to Minutes
-            arriveTime = hoursToMinutes(arriveTime);
-            let arriveTimeFinal = minutesToHour(arriveTime);
+    if (eventsContainer) {
+        console.log('eventsContainer');
+        fetchEventHistory(1);
+    };
     
-            // Leave By (15 Minute Fluff Added)
-            let leaveBy = arriveTime - driveTime - fluff;
-            let leaveByFinal = minutesToHour(leaveBy);
-    
-            // Get Ready By
-            let getReadyBy = leaveBy - getReadyLength;
-            let getReadyByFinal = minutesToHour(getReadyBy);
-    
-            // Shower By
-            let showerBy = getReadyBy - showerLength;
-            let showerByFinal = minutesToHour(showerBy);
-    
-            // Prep By
-            let prepBy = showerBy - prepLength;
-            let prepByFinal = minutesToHour(prepBy);
-
-            const htmlContent = `
-                <section>
-                    <h2>${taskName}</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Task</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Prep At</td>
-                                <td>${prepByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Shower At</td>
-                                <td>${showerByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Get Ready At</td>
-                                <td>${getReadyByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Leave At</td>
-                                <td>${leaveByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Arrive At</td>
-                                <td>${arriveTimeFinal}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
-            `;
-            
-            // Insert into element
-            let parentElement = document.getElementById("output");
-            parentElement.innerHTML = htmlContent;
-        };
-    
-    });
-
-    document.getElementById('getReady').addEventListener('click', function() {
-
-        let userInput = storeInput();
-        calculateGetReady(userInput);
-
-        function calculateGetReady({ taskName, arriveTime, driveTime }) {
-    
-            // Turn Arrive Time to Minutes
-            arriveTime = hoursToMinutes(arriveTime);
-            let arriveTimeFinal = minutesToHour(arriveTime);
-    
-            // Leave By (15 Minute Fluff Added)
-            let leaveBy = arriveTime - driveTime - fluff;
-            let leaveByFinal = minutesToHour(leaveBy);
-    
-            // Get Ready By
-            let getReadyBy = leaveBy - getReadyLength;
-            let getReadyByFinal = minutesToHour(getReadyBy);
-    
-            // Prep By
-            let prepBy = getReadyBy - prepLength;
-            let prepByFinal = minutesToHour(prepBy);
-
-            const htmlContent = `
-                <section>
-                    <h2>${taskName}</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Task</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Prep At</td>
-                                <td>${prepByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Get Ready At</td>
-                                <td>${getReadyByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Leave At</td>
-                                <td>${leaveByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Arrive At</td>
-                                <td>${arriveTimeFinal}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
-            `;
-            
-            // Insert into element
-            let parentElement = document.getElementById("output");
-            parentElement.innerHTML = htmlContent;    
-        };
-    
-    });
-
-    document.getElementById('drive').addEventListener('click', function() {
-
-        let userInput = storeInput();
-        calculateDrive(userInput);
-
-        function calculateDrive({ taskName, arriveTime, driveTime }) {
-    
-            // Turn Arrive Time to Minutes
-            arriveTime = hoursToMinutes(arriveTime);
-            let arriveTimeFinal = minutesToHour(arriveTime);
-    
-            // Leave By (15 Minute Fluff Added)
-            let leaveBy = arriveTime - driveTime - fluff;
-            let leaveByFinal = minutesToHour(leaveBy);
-    
-            // Prep By
-            let prepBy = leaveBy - prepLength;
-            let prepByFinal = minutesToHour(prepBy);
-    
-            const htmlContent = `
-                <section>
-                    <h2>${taskName}</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Task</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Prep At</td>
-                                <td>${prepByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Leave At</td>
-                                <td>${leaveByFinal}</td>
-                            </tr>
-                            <tr>
-                                <td>Arrive At</td>
-                                <td>${arriveTimeFinal}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
-            `;
-            
-            // Insert into element
-            let parentElement = document.getElementById("output");
-            parentElement.innerHTML = htmlContent;
-        };
-    
-    });
-
-    function storeInput() {
-        let taskName = document.getElementById('taskName').value;
-        let arriveTime = document.getElementById('arriveTime').value;
-        let driveTime = document.getElementById('driveTime').value;
-        driveTime = convertToNumber(driveTime);
-
-        return { taskName, arriveTime, driveTime }
-    }
-
-    function hoursToMinutes(time) {
-        // Split Hours and Minutes
-        const [hours, minutes] = time.split(':').map(Number);
-
-        const totalMinutes = (hours * 60) + minutes;
-        return totalMinutes;
+    // defaultLengthButton function must be above signUpBotton function
+    if (defaultLengthButton) {
+        defaultLengthButton.addEventListener('click', function() {
+            document.getElementById('prepLength').value = 45;
+            document.getElementById('showerLength').value = 30;
+            document.getElementById('getReadyLength').value = 30;
+            document.getElementById('fluffLength').value = 15;
+        });
     };
 
-    function minutesToHour(minutes) {
-        let hours = Math.floor(minutes / 60);
-        let remainingMinutes = minutes % 60;
-        let meridiem = "";
+    if (signUpButton) {
+        signUpButton.addEventListener('click', function(event) {
+            let valid = true;
+            let f_name = document.getElementById('f_name').value;
+            let l_name = document.getElementById('l_name').value
+            let email = document.getElementById('email').value
+            let username = document.getElementById('username').value
+            let password = document.getElementById('password').value
 
-        if (hours > 12) {
-            hours -= 12;
-            meridiem = " PM"
-        } else {
-            meridiem = " AM"
-        };
+            // Change User_ID
+            let user_id = 1;
+            let prep = document.getElementById('prepLength').value;
+            let shower = document.getElementById('showerLength').value;
+            let get_ready = document.getElementById('getReadyLength').value;
+            let fluff = document.getElementById('fluffLength').value;
+            let date_created = todayDate;
+            
+            // Validation
+            if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+                alert('Please enter a valid email address.');
+                valid = false;
+            };
 
-        // Pad with leading zeros
-        let paddedMinutes = String(remainingMinutes).padStart(2, '0');
+            if (username.length < 8) {
+                alert('Please enter a valid username.');
+                valid = false;
+            };
+            
+            if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/)) {
+                alert('Password must contain at least one number, one uppercase letter, one lowercase letter, and be at least 8 characters long.');
+                valid = false;
+            };
+            
+            if (!valid) {
+                event.preventDefault();
+            };
 
-        return `${hours}:${paddedMinutes}${meridiem}`;
+    
+            console.log(f_name, l_name, email, username, password);
+            
+            // Send to Server
+            fetch('/add_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    f_name: f_name,
+                    l_name: l_name,
+                    email: email,
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('User created successfully!');
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating user');
+            });
+
+            fetch('/add_preferences', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: user_id,
+                    prep: prep,
+                    shower: shower,
+                    get_ready: get_ready,
+                    fluff: fluff,
+                    date_created: date_created
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Preferences created successfully!');
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating preferences');
+            });
+        });
     };
 
-    function convertToNumber(string) {
-        number = Number(string);
-        return number;
+    if (wakeUpButton) {
+        eventDate.value = todayDate;
+
+        wakeUpButton.addEventListener('click', function(event) {
+            let userInput = storeInput();
+            let result = calculateWakeUp(userInput);
+            displayOutput(userInput.taskName, result.tasks);
+            
+            // Send to Server
+            event.preventDefault();
+    
+            // Change User_ID
+            let user_id = 1
+            let name = userInput.taskName
+            let date = userInput.taskDate
+            let i_arrival = userInput.arriveTime
+            let i_drive = userInput.driveTime
+            let o_prep = result.prepByFinal
+            let o_shower = result.showerByFinal
+            let o_get_ready = result.getReadyByFinal
+            let o_leave = result.leaveByFinal
+            
+            fetch('/add_event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: user_id,
+                    name: name,
+                    date: date,
+                    i_arrival: i_arrival,
+                    i_drive: i_drive,
+                    o_prep: o_prep,
+                    o_shower: o_shower,
+                    o_get_ready: o_get_ready,
+                    o_leave: o_leave,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Event created successfully!');
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating event');
+            });
+        });
+    };
+    
+    if (getReadyButton) {
+        getReadyButton.addEventListener('click', function(event) {
+            let userInput = storeInput();
+            let result = calculateGetReady(userInput);
+            displayOutput(userInput.taskName, result.tasks);
+
+            // Send to Server
+            event.preventDefault();
+    
+            let user_id = 1
+            let name = userInput.taskName
+            let date = userInput.taskDate
+            let i_arrival = userInput.arriveTime
+            let i_drive = userInput.driveTime
+            let o_prep = result.prepByFinal
+            let o_get_ready = result.getReadyByFinal
+            let o_leave = result.leaveByFinal
+            
+            fetch('/add_event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: user_id,
+                    name: name,
+                    date: date,
+                    i_arrival: i_arrival,
+                    i_drive: i_drive,
+                    o_prep: o_prep,
+                    o_get_ready: o_get_ready,
+                    o_leave: o_leave,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Post created successfully!');
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating post');
+            });
+        });
+    };
+    
+    if (driveButton) {
+        driveButton.addEventListener('click', function(event) {
+            let userInput = storeInput();
+            let result = calculateDrive(userInput);
+            displayOutput(userInput.taskName, result.tasks);
+
+            // Send to Server
+            event.preventDefault();
+    
+            let user_id = 1
+            let name = userInput.taskName
+            let date = userInput.taskDate
+            let i_arrival = userInput.arriveTime
+            let i_drive = userInput.driveTime
+            let o_prep = result.prepByFinal
+            let o_leave = result.leaveByFinal
+            
+            fetch('/add_event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: user_id,
+                    name: name,
+                    date: date,
+                    i_arrival: i_arrival,
+                    i_drive: i_drive,
+                    o_prep: o_prep,
+                    o_leave: o_leave,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Post created successfully!');
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating post');
+            });
+        });
     };
 });
+
+function calculateWakeUp({ arriveTime, driveTime }) {
+    arriveTime = hoursToMinutes(arriveTime);
+    let arriveTimeFinal = minutesToHour(arriveTime);
+    
+    let leaveBy = arriveTime - driveTime - fluff0;
+    let leaveByFinal = minutesToHour(leaveBy);
+    
+    let getReadyBy = leaveBy - getReadyLength0;
+    let getReadyByFinal = minutesToHour(getReadyBy);
+    
+    let showerBy = getReadyBy - showerLength0;
+    let showerByFinal = minutesToHour(showerBy);
+    
+    let prepBy = showerBy - prepLength0;
+    let prepByFinal = minutesToHour(prepBy);
+
+    return {
+        tasks: [
+            { name: "Prep At", time: prepByFinal },
+            { name: "Shower At", time: showerByFinal },
+            { name: "Get Ready At", time: getReadyByFinal },
+            { name: "Leave At", time: leaveByFinal },
+            { name: "Arrive At", time: arriveTimeFinal }
+        ],
+        prepByFinal, showerByFinal, getReadyByFinal, leaveByFinal, arriveTimeFinal
+    };
+
+};
+
+function calculateGetReady({arriveTime, driveTime }) {
+    
+    arriveTime = hoursToMinutes(arriveTime);
+    let arriveTimeFinal = minutesToHour(arriveTime);
+
+    let leaveBy = arriveTime - driveTime - fluff;
+    let leaveByFinal = minutesToHour(leaveBy);
+
+    let getReadyBy = leaveBy - getReadyLength;
+    let getReadyByFinal = minutesToHour(getReadyBy);
+
+    let prepBy = getReadyBy - prepLength;
+    let prepByFinal = minutesToHour(prepBy);
+
+    return {
+        tasks: [
+            { name: "Prep At", time: prepByFinal },
+            { name: "Get Ready At", time: getReadyByFinal },
+            { name: "Leave At", time: leaveByFinal },
+            { name: "Arrive At", time: arriveTimeFinal }
+        ],
+    prepByFinal, getReadyByFinal, leaveByFinal, arriveTimeFinal
+    };
+};
+
+function calculateDrive({arriveTime, driveTime }) {
+
+    arriveTime = hoursToMinutes(arriveTime);
+    let arriveTimeFinal = minutesToHour(arriveTime);
+
+    let leaveBy = arriveTime - driveTime - fluff;
+    let leaveByFinal = minutesToHour(leaveBy);
+
+    let prepBy = leaveBy - prepLength;
+    let prepByFinal = minutesToHour(prepBy);
+
+    return {
+        tasks: [
+            { name: "Prep At", time: prepByFinal },
+            { name: "Leave At", time: leaveByFinal },
+            { name: "Arrive At", time: arriveTimeFinal }
+        ],
+        prepByFinal, leaveByFinal, arriveTimeFinal
+    };
+};
+
+function storeInput() {
+    let taskName = document.getElementById('taskName').value;
+    let taskDate = document.getElementById('eventDate').value;
+    let arriveTime = document.getElementById('arriveTime').value;
+    let driveTime = document.getElementById('driveTime').value;
+    driveTime = convertToNumber(driveTime);
+
+    return { taskName, arriveTime, driveTime, taskDate }
+}
+
+function displayOutput(taskName, tasks) {
+    const tableRows = tasks.map(task => `<tr><td>${task.name}</td><td>${task.time}</td></tr>`).join('');
+
+    const htmlContent = `
+        <section>
+            <h2>${taskName}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+        </section>
+    `;
+
+    let parentElement = document.getElementById("output");
+    parentElement.innerHTML = htmlContent;
+};
+
+function fetchEventHistory(userId) {
+    fetch(`/event_history/user/${userId}`)
+    .then(response => response.json())
+    .then(events => {
+        const eventsContainer = document.getElementById('eventsContainer');
+        eventsContainer.innerHTML = '';
+
+        events.forEach(event => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${event.date}</td>
+                <td>${event.name}</td>
+                <td>${event.o_prep}</td>
+                <td>${event.o_shower}</td>
+                <td>${event.o_get_ready}</td>
+                <td>${event.o_leave}</td>
+                <td>${event.i_drive}</td>
+                <td>${event.i_arrival}</td>
+                <td>${event.result}</td>
+                <td>${event.notes}</td>
+            `;
+            // console.log('name: ', event.name, 'date: ', event.date, 'arrival: ', event.i_arrival, 'drive: ', event.i_drive, 'prep: ', event.o_prep, 'shower: ', event.o_shower, 'get ready: ', event.o_get_ready, 'leave: ', event.o_leave, 'result: ', event.result, 'notes: ', event.notes);
+            eventsContainer.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error fetching events:', error));
+}

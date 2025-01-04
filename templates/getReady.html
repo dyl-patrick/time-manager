@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Time Manager</title>
+</head>
+<body>
+    <h1>Time Manager</h1>
+    <h2>Get Ready</h2>
+
+    <a href="profile.html">Profile</a>
+    <a href="eventHistory.html">Event History</a>
+
+    <form action="post" id="timeManager">
+        <div>
+            <input type="text" id="taskName" name="taskName" placeholder=" " required>
+            <label for="taskName">Task Name</label>
+        </div><br>
+        
+        <div>
+            <input type="date" id="eventDate" name="eventDate" placeholder=" " required>
+            <label for="eventDate">Date</label>
+        </div><br>
+    
+        <div>
+            <input type="time" id="arriveTime" name="arriveTime" placeholder=" " required>
+            <label for="arriveTime">Arrival Time</label>
+        </div><br>
+    
+        <div>
+            <input type="number" id="driveTime" inputmode="numeric" name="driveTime" placeholder=" " required>
+            <label for="driveTime">Drive Time</label>
+        </div><br>
+    
+        <button type="button" id="wakeUp">Wake Up Process</button>
+        <button type="button" id="getReady">Get Ready Process</button>
+        <button type="button" id="drive">Drive Process</button>
+        <input type="reset" value="Clear">
+    </form>
+
+    <div id="output">
+
+    </div>
+
+    <script type="module" src="/static/js/script.js"></script>
+</body>
+</html>

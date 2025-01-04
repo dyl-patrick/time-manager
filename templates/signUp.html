@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Time Manager</title>
+</head>
+<body>
+    <h1>Time Manager</h1>
+    <h2>Sign Up</h2>
+
+    <!--Revise method, action, and submit button. Maybe need to change page w/JavaScript after validation-->
+    <form method="post" action="getReady.html">
+        <section>
+            <label for="f_name">First Name</label><br>
+            <input type="text" id="f_name" name="f_name" required><br>
+    
+            <label for="l_name">Last Name</label><br>
+            <input type="text" id="l_name" name="l_name" required><br>
+    
+            <label for="email">Email</label><br>
+            <input type="email" id="email" name="email" required><br>
+            <small>Email should be in the format: user@example.com</small><br>
+    
+            <label for="username">Username</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <small>Username should be at least 8 characters long.</small><br>
+    
+            <label for="password">Password</label><br>
+            <input type="password" id="password" name="password" required><br>
+            <small>Password must contain at least one number, one uppercase letter, one lowercase letter, and be at least 8 characters long.</small><br>
+        </section>
+
+        <section>
+            <label for="prepLength">Prep Length</label>
+            <input type="text" id="prepLength" name="prepLength"><br>
+
+            <label for="showerLength">Shower Length</label>
+            <input type="text" id="showerLength" name="showerLength"><br>
+
+            <label for="getReadyLength">Get Ready Length</label>
+            <input type="text" id="getReadyLength" name="getReadyLength"><br>
+
+            <label for="fluffLength">Fluff Length</label>
+            <input type="text" id="fluffLength" name="fluffLength">
+        </section>
+
+        <button type="button" id="signUp">Sign Up</button>
+        <button type="button" id="defaultLength">Default Lengths</button>
+        <input type="reset" value="Clear">
+        <!--
+            <a href="getReady.html">
+                <input type="submit" value="Sign Up">
+            </a>
+        -->
+    </form>
+
+    <script type="module" src="/static/js/script.js"></script>
+</body>
+</html>

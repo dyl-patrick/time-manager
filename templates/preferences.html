@@ -12,7 +12,7 @@
     <h1>Time Manager</h1>
     <h2>Preferences</h2>
 
-    <form action="">
+    <form method="post" action="">
         <label for="prep">Prep Length</label>
         <input type="text" id="prep" name="prep"><br>
 
@@ -24,6 +24,10 @@
 
         <label for="fluff">Fluff Length</label>
         <input type="text" id="fluff" name="fluff">
+
+        <button type="button" id="preferences">Save Changes</button>
+        <button type="button" id="defaultLength">Default Lengths</button>
+        <input type="reset" value="Clear">
     </form>
 </body>
 </html>
