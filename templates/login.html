@@ -11,16 +11,22 @@
     <h2>Login</h2>
 
     <!--Revise method, action, and submit button. Maybe need to change page w/JavaScript after validation-->
-    <form method="get" action="getReady.html">
+    <form method="POST" action="getReady.html">
         <label for="username">Username</label><br>
         <input type="text" id="username" name="username"><br>
 
-        <label for="pwd">Password</label><br>
-        <input type="password" id="pwd" name="pwd"><br>
+        <label for="password">Password</label><br>
+        <input type="password" id="password" name="password"><br>
 
-        <a href="getReady.html">
-            <input type="submit" value="Login">
-        </a>
+        <!--
+            <a href="getReady.html">
+                <input type="submit" value="Login">
+            </a>
+        -->
+
+        <button type="button" id="login">Login</button>
     </form>
+
+    <script type="module" src="/static/js/script.js"></script>
 </body>
 </html>

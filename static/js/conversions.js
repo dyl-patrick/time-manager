@@ -5,23 +5,21 @@ export function hoursToMinutes(time) {
     return totalMinutes;
 };
 
-export function minutesToHour(minutes) {
-    let hours = Math.floor(minutes / 60);
-    let remainingMinutes = minutes % 60;
-    let meridiem = "";
+export function convertToStandardTime(newMinutes) {
+    const hours = Math.floor(newMinutes / 60);
+    const newerMinutes = newMinutes % 60;
 
-    if (hours > 12) {
-        hours -= 12;
-        meridiem = " PM"
-    } else {
-        meridiem = " AM"
-    };
+    // Determine AM or PM suffix
+    const period = hours >= 12 ? 'PM' : 'AM';
 
-    // Leading zeros
-    let paddedMinutes = String(remainingMinutes).padStart(2, '0');
+    // Convert hour to 12-hour format
+    const standardHour = hours % 12 || 12; // This handles "0" hour as "12" for 12 AM
 
-    return `${hours}:${paddedMinutes}${meridiem}`;
-};
+    // Format minutes to always appear as two digits
+    const formattedMinutes = newerMinutes < 10 ? '0' + newerMinutes : newerMinutes;
+
+    return `${standardHour}:${formattedMinutes} ${period}`;
+}
 
 export function convertToNumber(string) {
     let number = Number(string);
@@ -35,4 +33,14 @@ export function getDate() {
     var dd = String(today.getDate()).padStart(2, '0');
     var currentDate = `${yyyy}-${mm}-${dd}`;
     return currentDate;
+};
+
+export function displayValue(value) {
+    return value === null ? '' : value;
+};
+
+export function amPmConversion(time) {
+    let htm = hoursToMinutes(time);
+    let conversion = convertToStandardTime(htm);
+    return conversion;
 };

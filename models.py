@@ -1,4 +1,6 @@
 from extensions import db
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -8,7 +10,7 @@ class User(db.Model):
     l_name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50))
     username = db.Column(db.String(20), nullable=False)
-    password = db.Column(db.String(20), nullable=False)
+    password_hash = db.Column(db.String(128))
     preferences = db.relationship('Preferences', back_populates='user', uselist=False, cascade='all, delete-orphan')
     event_history = db.relationship('Event_History', backref='user', lazy=True)
 
@@ -16,7 +18,7 @@ class User(db.Model):
         self.f_name = f_name
         self.l_name = l_name
         self.username = username
-        self.password = password
+        self.set_password(password)
         self.email = email
     
     def __repr__(self):
@@ -28,9 +30,14 @@ class User(db.Model):
         'f_name': self.f_name,
         'l_name': self.l_name,
         'username': self.username,
-        'password': self.password,
         'email': self.email
         }
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class Preferences(db.Model):
     __tablename__ = "preferences"

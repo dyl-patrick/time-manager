@@ -1,10 +1,14 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, session
 from extensions import db
 from datetime import datetime
 import re
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'  # For simplicity, using SQLite
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# CHANGE SECRET KEY
+app.config['SECRET_KEY'] = 'your_secret_key_here'
 db.init_app(app)
 
 from models import User, Preferences, Event_History
@@ -15,7 +19,55 @@ with app.app_context():
 
 @app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/signUp')
+def signUp():
+    return render_template('signUp.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('getReady.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+@app.route('/event_history')
+def event_history():
     return render_template('eventHistory.html')
+
+@app.route('/edit_event_history')
+def edit_event_history():
+    return render_template('editEventHistory.html')
+
+@app.route('/preferences')
+def preferences():
+    return render_template('preferences.html')
+
+@app.route('/login-request', methods=['POST'])
+def loginRequest():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'error': 'Username and Password are required'}), 400
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and user.check_password(password):
+        # Login successful, set up user session
+        session['user_id'] = user.user_id
+        return jsonify({'message': 'Logged in successfully'}), 200
+    else:
+        # Invalid credentials
+        return jsonify({'error': 'Invalid username or password'}), 401
+
 
 @app.route('/event_history/user/<int:user_id>', methods=['GET'])
 def get_posts_by_user(user_id):
@@ -36,7 +88,6 @@ def add_preferences():
     preferences = db_add_preferences(user_id=user_id, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
     return jsonify(preferences.to_dict()), 201
 
-# TO DO: find out how to test with html form
 @app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.get_json()
@@ -54,7 +105,6 @@ def add_user():
     if not re.match(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$', password):
         return jsonify({"error": "Password must be at least 8 characters long and include at least one number, one uppercase, and one lowercase letter."}), 400
 
-    # Store in database
     user = db_add_user(f_name=data['f_name'], l_name=data['l_name'], email=data['email'], username=data['username'], password=data['password'])
     return jsonify(user.to_dict()), 201
 

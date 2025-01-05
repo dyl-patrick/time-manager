@@ -1,4 +1,4 @@
-import { hoursToMinutes, minutesToHour, convertToNumber, getDate } from "/static/js/conversions.js";
+import { hoursToMinutes, convertToStandardTime, convertToNumber, getDate, displayValue, amPmConversion } from "/static/js/conversions.js";
 
 const prepLength0 = 45;
 const showerLength0 = 30;
@@ -14,13 +14,60 @@ document.addEventListener('DOMContentLoaded', function() {
     var getReadyButton = document.getElementById('getReady');
     var driveButton = document.getElementById('drive');
     var todayDate = getDate();
+    var loginButton = document.getElementById('login');
+    var loginLink = document.getElementById('login-link');
+    var signUpLink = document.getElementById('signUp-link');
+
+    if (loginLink) {
+        loginLink.addEventListener('click', function() {
+            window.location.href = '/login.html';
+        });
+    };
+
+    if (signUpLink) {
+        signUpLink.addEventListener('click', function() {
+            window.location.href = '/signUp.html';
+        });
+    };
+
+    if (loginButton) {
+        loginButton.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let username = document.getElementById('username').value;
+            let password = document.getElementById('password').value;
+
+            fetch('/login-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    console.log('Login successful:', data.message);
+                    // Redirect user to another page or update the UI to show logged in state
+                    window.location.href = '/dashboard'; // Redirect to the dashboard page if login is successful
+                } else if (data.error) {
+                    console.error('Login failed:', data.error);
+                    alert('Login failed: ' + data.error); // Show error to the user
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    };
 
     if (eventsContainer) {
         console.log('eventsContainer');
         fetchEventHistory(1);
     };
     
-    // defaultLengthButton function must be above signUpBotton function
+    // defaultLengthButton function must be above signUpButton function
     if (defaultLengthButton) {
         defaultLengthButton.addEventListener('click', function() {
             document.getElementById('prepLength').value = 45;
@@ -88,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 alert('User created successfully!');
                 console.log(data);
+                window.location.href = '/login.html';
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -264,19 +312,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function calculateWakeUp({ arriveTime, driveTime }) {
     arriveTime = hoursToMinutes(arriveTime);
-    let arriveTimeFinal = minutesToHour(arriveTime);
+    let arriveTimeFinal = convertToStandardTime(arriveTime);
     
     let leaveBy = arriveTime - driveTime - fluff0;
-    let leaveByFinal = minutesToHour(leaveBy);
+    let leaveByFinal = convertToStandardTime(leaveBy);
     
     let getReadyBy = leaveBy - getReadyLength0;
-    let getReadyByFinal = minutesToHour(getReadyBy);
+    let getReadyByFinal = convertToStandardTime(getReadyBy);
     
     let showerBy = getReadyBy - showerLength0;
-    let showerByFinal = minutesToHour(showerBy);
+    let showerByFinal = convertToStandardTime(showerBy);
     
     let prepBy = showerBy - prepLength0;
-    let prepByFinal = minutesToHour(prepBy);
+    let prepByFinal = convertToStandardTime(prepBy);
 
     return {
         tasks: [
@@ -294,16 +342,16 @@ function calculateWakeUp({ arriveTime, driveTime }) {
 function calculateGetReady({arriveTime, driveTime }) {
     
     arriveTime = hoursToMinutes(arriveTime);
-    let arriveTimeFinal = minutesToHour(arriveTime);
+    let arriveTimeFinal = convertToStandardTime(arriveTime);
 
-    let leaveBy = arriveTime - driveTime - fluff;
-    let leaveByFinal = minutesToHour(leaveBy);
+    let leaveBy = arriveTime - driveTime - fluff0;
+    let leaveByFinal = convertToStandardTime(leaveBy);
 
-    let getReadyBy = leaveBy - getReadyLength;
-    let getReadyByFinal = minutesToHour(getReadyBy);
+    let getReadyBy = leaveBy - getReadyLength0;
+    let getReadyByFinal = convertToStandardTime(getReadyBy);
 
-    let prepBy = getReadyBy - prepLength;
-    let prepByFinal = minutesToHour(prepBy);
+    let prepBy = getReadyBy - prepLength0;
+    let prepByFinal = convertToStandardTime(prepBy);
 
     return {
         tasks: [
@@ -319,13 +367,13 @@ function calculateGetReady({arriveTime, driveTime }) {
 function calculateDrive({arriveTime, driveTime }) {
 
     arriveTime = hoursToMinutes(arriveTime);
-    let arriveTimeFinal = minutesToHour(arriveTime);
+    let arriveTimeFinal = convertToStandardTime(arriveTime);
 
-    let leaveBy = arriveTime - driveTime - fluff;
-    let leaveByFinal = minutesToHour(leaveBy);
+    let leaveBy = arriveTime - driveTime - fluff0;
+    let leaveByFinal = convertToStandardTime(leaveBy);
 
-    let prepBy = leaveBy - prepLength;
-    let prepByFinal = minutesToHour(prepBy);
+    let prepBy = leaveBy - prepLength0;
+    let prepByFinal = convertToStandardTime(prepBy);
 
     return {
         tasks: [
@@ -379,22 +427,23 @@ function fetchEventHistory(userId) {
         eventsContainer.innerHTML = '';
 
         events.forEach(event => {
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${event.date}</td>
                 <td>${event.name}</td>
                 <td>${event.o_prep}</td>
-                <td>${event.o_shower}</td>
-                <td>${event.o_get_ready}</td>
+                <td>${displayValue(event.o_shower)}</td>
+                <td>${displayValue(event.o_get_ready)}</td>
                 <td>${event.o_leave}</td>
                 <td>${event.i_drive}</td>
-                <td>${event.i_arrival}</td>
-                <td>${event.result}</td>
-                <td>${event.notes}</td>
+                <td>${amPmConversion(event.i_arrival)}</td>
+                <td>${displayValue(event.result)}</td>
+                <td>${displayValue(event.notes)}</td>
             `;
             // console.log('name: ', event.name, 'date: ', event.date, 'arrival: ', event.i_arrival, 'drive: ', event.i_drive, 'prep: ', event.o_prep, 'shower: ', event.o_shower, 'get ready: ', event.o_get_ready, 'leave: ', event.o_leave, 'result: ', event.result, 'notes: ', event.notes);
             eventsContainer.appendChild(row);
         });
     })
     .catch(error => console.error('Error fetching events:', error));
-}
+};
