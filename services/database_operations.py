@@ -20,9 +20,6 @@ def add_preferences(user_id, prep, shower, get_ready, fluff, date_created):
     db.session.commit()
     return new_preferences
 
-# Read
-    # Login
-    # Event History
-
 # Update
     # Edit Event History
+    # Preferences

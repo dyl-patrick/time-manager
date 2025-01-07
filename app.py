@@ -6,9 +6,7 @@ import re
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'  # For simplicity, using SQLite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# CHANGE SECRET KEY
-app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SECRET_KEY'] = b'\xfd\xba\x14\x9b\x80\x91\xbeO\xbdo\xa5\xfa\xf5\x1a\x8eJ\x99\xde\xd7\x0b\xf9\xa6\xbb\x05'
 db.init_app(app)
 
 from models import User, Preferences, Event_History
@@ -49,6 +47,14 @@ def edit_event_history():
 def preferences():
     return render_template('preferences.html')
 
+@app.route('/get_preferences/<int:user_id>', methods=['GET'])
+def get_preferences(user_id):
+    preferences = Preferences.query.filter_by(user_id=user_id).first()
+    if preferences:
+        return jsonify(preferences.to_dict())
+    else:
+        return jsonify({'error': 'Preferences not found'}), 404
+
 @app.route('/login-request', methods=['POST'])
 def loginRequest():
     data = request.get_json()
@@ -67,7 +73,6 @@ def loginRequest():
     else:
         # Invalid credentials
         return jsonify({'error': 'Invalid username or password'}), 401
-
 
 @app.route('/event_history/user/<int:user_id>', methods=['GET'])
 def get_posts_by_user(user_id):
@@ -108,8 +113,6 @@ def add_user():
     user = db_add_user(f_name=data['f_name'], l_name=data['l_name'], email=data['email'], username=data['username'], password=data['password'])
     return jsonify(user.to_dict()), 201
 
-# TO DO: I broke everything and have no idea what the FUCK i changed :(
-    # NOT NO MORE LETS FUCKING GOOOO
 @app.route('/add_event', methods=['POST'])
 def add_event():
     data = request.get_json()
