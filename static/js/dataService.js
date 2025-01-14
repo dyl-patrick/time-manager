@@ -1,7 +1,7 @@
-import { displayValue, amPmConversion } from "/static/js/conversions.js";
+import { displayValue, amPmConversion } from "/static/js/utilities.js";
 
-export function login(username, password) {
-    fetch('/login-request', {
+export async function login(username, password) {
+    return fetch('/login-request', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -24,26 +24,7 @@ export function login(username, password) {
     });
 };
 
-export function signUpValidation(email, username, password, valid) {
-    if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
-        alert('Please enter a valid email address.');
-        valid = false;
-    };
-
-    if (username.length < 8) {
-        alert('Please enter a valid username.');
-        valid = false;
-    };
-    
-    if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/)) {
-        alert('Password must contain at least one number, one uppercase letter, one lowercase letter, and be at least 8 characters long.');
-        valid = false;
-    };
-
-    return valid;
-};
-
-export function addPreferences(user_id, prep, shower, get_ready, fluff, date_created) {
+export async function addPreferences(user_id, prep, shower, get_ready, fluff, date_created) {
     fetch('/add_preferences', {
         method: 'POST',
         headers: {
@@ -62,39 +43,41 @@ export function addPreferences(user_id, prep, shower, get_ready, fluff, date_cre
     .then(data => {
         alert('Preferences created successfully!');
         console.log(data);
-        return true;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error creating preferences');
-        return false;
-    });
-};
-
-export function addUser(f_name, l_name, email, username, password) {
-    fetch('/add_user', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            f_name: f_name,
-            l_name: l_name,
-            email: email,
-            username: username,
-            password: password
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('User created successfully!');
-        console.log(data);
         window.location.href = '/login';
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error creating user');
+        alert('Error creating preferences');
     });
+};
+
+export async function addUser(f_name, l_name, email, username, password) {
+    try {
+        const response = await fetch('/add_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                f_name: f_name,
+                l_name: l_name,
+                email: email,
+                username: username,
+                password: password
+            })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to create user');
+        }
+        alert('User created successfully!');
+        console.log(data);
+        return { valid: true, user_id: data.user_id };
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error creating user');
+        return { valid: false, user_id: null };
+    };
 };
 
 export function wakeUpPOST(user_id, name, date, i_arrival, i_drive, o_prep, o_shower, o_get_ready, o_leave) {
@@ -145,7 +128,7 @@ export function getReadyPOST(user_id, name, date, i_arrival, i_drive, o_prep, o_
     })
     .then(response => response.json())
     .then(data => {
-        alert('Post created successfully!');
+        alert('Event created successfully!');
         console.log(data);
     })
     .catch(error => {
@@ -209,21 +192,47 @@ export function getEventHistory(userId) {
     .catch(error => console.error('Error fetching events:', error));
 };
 
-export function getUserPreferences(userId) {
-    return fetch(`/get_preferences/${userId}`)
-    .then(response => {
-        if (response.ok) {
-            return response.json();
+export async function getUserPreferences() {
+    try {
+        const response = await fetch('/get_preferences')
+        if (!response.ok) {
+            throw new Error('Failed to fetch preferences');
         }
-        throw new Error('Network response was not ok.');
-    })
-    .then(preferences => {
-        var fluff = preferences.fluff;
-        var prep = preferences.prep;
-        var shower = preferences.shower;
-        var getReady = preferences.get_ready;
-        console.log("getUserPreferences")
+        const data = await response.json();
+        const { fluff, prep, shower, get_ready: getReady } = data;
+        console.log("Preferences retrieved:", { fluff, prep, shower, getReady });
+
         return { fluff, prep, shower, getReady };
-    })
-    .catch(error => console.error('Error fetching preferences:', error));
+
+    } catch (error) {
+        console.error('Error fetching preferences:', error);
+        return { error: error.message };
+    }
+};
+
+export async function logout() {
+    const response = await fetch('/logout', {
+        method: 'POST',
+        credentials: 'include',
+    });
+    const data = await response.json();
+    console.log(data);
+    window.location.href = '/';
+}
+
+export async function getUserID() {
+    try {
+        const response = await fetch('/get_user_id')
+        if (!response.ok) {
+            throw new Error('Failed to fetch User ID');
+        }
+        const data = await response.json();;
+        console.log(data, typeof(data));
+
+        return data;
+
+    } catch (error) {
+        console.error('Error fetching preferences:', error);
+        return { error: error.message };
+    }
 };

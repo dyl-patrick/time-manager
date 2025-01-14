@@ -47,13 +47,26 @@ def edit_event_history():
 def preferences():
     return render_template('preferences.html')
 
-@app.route('/get_preferences/<int:user_id>', methods=['GET'])
-def get_preferences(user_id):
-    preferences = Preferences.query.filter_by(user_id=user_id).first()
-    if preferences:
-        return jsonify(preferences.to_dict())
-    else:
-        return jsonify({'error': 'Preferences not found'}), 404
+@app.route('/get_user_id', methods=['GET'])
+def get_user_id():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        if user_id:
+            return jsonify(user_id)
+        else:
+            return jsonify({'error': 'User ID not found'}), 404
+    return jsonify({'message': 'User not authenticated'}), 401
+
+@app.route('/get_preferences', methods=['GET'])
+def get_preferences():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        preferences = Preferences.query.filter_by(user_id=user_id).first()
+        if preferences:
+            return jsonify(preferences.to_dict())
+        else:
+            return jsonify({'error': 'Preferences not found'}), 404
+    return jsonify({'message': 'User not authenticated'}), 401
 
 @app.route('/login-request', methods=['POST'])
 def loginRequest():
@@ -73,6 +86,11 @@ def loginRequest():
     else:
         # Invalid credentials
         return jsonify({'error': 'Invalid username or password'}), 401
+    
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    return jsonify({"message": "Logged out successfully"})
 
 @app.route('/event_history/user/<int:user_id>', methods=['GET'])
 def get_posts_by_user(user_id):
@@ -133,20 +151,6 @@ def add_event():
     o_leave = datetime.strptime(data['o_leave'], '%I:%M %p').time()
     event = db_add_event(user_id=user_id, name=name, date=date, i_arrival=i_arrival, i_drive=i_drive, o_prep=o_prep, o_shower=o_shower, o_get_ready=o_get_ready, o_leave=o_leave)
     return jsonify(event.to_dict()), 201
-
-@app.route('/tasks')
-def show_tasks():
-    users = User.query.all()
-    prefs = Preferences.query.all()
-    events = Event_History.query.all()
-
-    users_result = '<br>'.join([f'{user.user_id} | {user.f_name} {user.l_name} | {user.username} | {user.password}' for user in users])
-    prefs_result = '<br>'.join([f'{pref.pref_id} | {pref.user_id} | {pref.prep} | {pref.shower} | {pref.get_ready} | {pref.fluff} | {pref.active}' for pref in prefs])
-    events_result = '<br>'.join([f'{event.event_id} | {event.user_id} | {event.name} | {event.date} | {event.i_arrival} | {event.i_drive} | {event.o_prep} | {event.o_leave}' for event in events])
-
-    combined_result = f"{users_result}<br>{prefs_result}<br>{events_result}"
-    
-    return combined_result
 
 if __name__ == "__main__":
     app.run(debug=True)
