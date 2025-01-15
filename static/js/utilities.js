@@ -15,7 +15,7 @@ function convertToStandardTime(newMinutes) {
     return `${standardHour}:${formattedMinutes} ${period}`;
 }
 
-function convertToNumber(string) {
+export function convertToNumber(string) {
     let number = Number(string);
     return number;
 };
@@ -38,6 +38,35 @@ export function amPmConversion(time) {
     let conversion = convertToStandardTime(htm);
     return conversion;
 };
+
+export function toggleButton() {
+    var divs = document.getElementsByClassName('toggleDiv');
+    for (let div of divs) {  // Loop through all elements with the class 'toggleDiv'
+        if (div.style.display === 'none') {
+            div.style.display = 'block';
+        } else {
+            div.style.display = 'none';
+        }
+    }
+};
+
+export function collapsibleEvent() {
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+    
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        } 
+      });
+    };
+};
+
 
 export function signUpValidation(email, username, password, valid) {
     if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {

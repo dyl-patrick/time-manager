@@ -14,6 +14,12 @@ def add_event(user_id, name, date, i_arrival, i_drive, o_prep, o_shower, o_get_r
     db.session.commit()
     return new_event
 
+def edit_event(name, result, notes):
+    edit_event = Event_History(name=name, result=result, notes=notes)
+    db.session.add(edit_event)
+    db.session.commit()
+    return edit_event
+
 def add_preferences(user_id, prep, shower, get_ready, fluff, date_created):
     new_preferences = Preferences(user_id=user_id, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
     db.session.add(new_preferences)

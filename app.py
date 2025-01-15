@@ -39,13 +39,32 @@ def profile():
 def event_history():
     return render_template('eventHistory.html')
 
-@app.route('/edit_event_history')
-def edit_event_history():
-    return render_template('editEventHistory.html')
-
 @app.route('/preferences')
 def preferences():
     return render_template('preferences.html')
+
+@app.route('/get_events_by_date/<int:user_id>', methods=['GET'])
+def get_events_by_date(user_id):
+    query_date = request.args.get('date')  # Date should be passed as a query parameter
+    if query_date:
+        query_date = datetime.strptime(query_date, '%Y-%m-%d').date()
+        events = Event_History.query.filter_by(user_id=user_id, date=query_date).all()
+        return jsonify([event.to_dict() for event in events]), 200
+    return jsonify({'error': 'Missing date parameter'}), 400
+
+@app.route('/update_preferences/<int:user_id>', methods=['POST'])
+def update_preferences(user_id):
+    data = request.get_json()
+    preferences = Preferences.query.filter_by(user_id=user_id).first()
+    if preferences:
+        preferences.prep = data.get('prep', preferences.prep)
+        preferences.shower = data.get('shower', preferences.shower)
+        preferences.get_ready = data.get('get_ready', preferences.get_ready)
+        preferences.fluff = data.get('fluff', preferences.fluff)
+        db.session.commit()
+        return jsonify(preferences.to_dict()), 200
+    else:
+        return jsonify({'error': 'Preferences not found'}), 404
 
 @app.route('/get_user_id', methods=['GET'])
 def get_user_id():

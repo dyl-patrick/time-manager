@@ -21,6 +21,7 @@ export async function login(username, password) {
     .catch(error => {
         console.error('Error:', error);
         alert('An error occurred. Please try again.');
+        // UI Error Handling
     });
 };
 
@@ -77,6 +78,7 @@ export async function addUser(f_name, l_name, email, username, password) {
         console.error('Error:', error);
         alert('Error creating user');
         return { valid: false, user_id: null };
+        // UI Error Handling
     };
 };
 
@@ -164,32 +166,54 @@ export function drivePOST(user_id, name, date, i_arrival, i_drive, o_prep, o_lea
     });
 };
 
-export function getEventHistory(userId) {
-    fetch(`/event_history/user/${userId}`)
-    .then(response => response.json())
-    .then(events => {
-        const eventsContainer = document.getElementById('eventsContainer');
-        eventsContainer.innerHTML = '';
+export async function getEventHistory(userId) {
+    const eventsContainer = document.getElementById('eventsContainer');
+    eventsContainer.innerHTML = '';
+
+    try {
+        const response = await fetch(`/event_history/user/${userId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch events');
+        }
+        const events = await response.json();
 
         events.forEach(event => {
-
-            const row = document.createElement('tr');
+            const row = document.createElement('div');
             row.innerHTML = `
-                <td>${event.date}</td>
-                <td>${event.name}</td>
-                <td>${event.o_prep}</td>
-                <td>${displayValue(event.o_shower)}</td>
-                <td>${displayValue(event.o_get_ready)}</td>
-                <td>${event.o_leave}</td>
-                <td>${event.i_drive}</td>
-                <td>${amPmConversion(event.i_arrival)}</td>
-                <td>${displayValue(event.result)}</td>
-                <td>${displayValue(event.notes)}</td>
+                <button class="collapsible">${event.name} on ${event.date}</button>
+                <div class="content">
+                    <div>
+                        <p>Prep At: ${event.o_prep}</p>
+                    </div>
+                    <div>
+                        <p>Shower At: ${displayValue(event.o_shower)}</p>
+                    </div>
+                    <div>
+                        <p>Get Ready At: ${displayValue(event.o_get_ready)}</p>
+                    </div>
+                    <div>
+                        <p>Leave At: ${event.o_leave}</p>
+                    </div>
+                    <div>
+                        <p>Drive Time: ${event.i_drive}</p>
+                    </div>
+                    <div>
+                        <p>Arrive At: ${amPmConversion(event.i_arrival)}</p>
+                    </div>
+                    <div>
+                        <p>Outcome: ${displayValue(event.result)}</p>
+                    </div>
+                    <div>
+                        <p>Notes: ${displayValue(event.notes)}</p>
+                    </div>
+                </div>
             `;
             eventsContainer.appendChild(row);
         });
-    })
-    .catch(error => console.error('Error fetching events:', error));
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        // UI Error Handling
+    }
 };
 
 export async function getUserPreferences() {
@@ -206,6 +230,7 @@ export async function getUserPreferences() {
 
     } catch (error) {
         console.error('Error fetching preferences:', error);
+        // UI Error Handling
         return { error: error.message };
     }
 };
@@ -233,6 +258,109 @@ export async function getUserID() {
 
     } catch (error) {
         console.error('Error fetching preferences:', error);
+        // UI Error Handling
         return { error: error.message };
+    }
+};
+
+export async function updatePreferences(userId, prep, shower, getReady, fluff) {
+    try {
+        const response = await fetch(`/update_preferences/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prep: prep,
+                shower: shower,
+                get_ready: getReady,
+                fluff: fluff
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Failed to update preferences. Status: ' + response.status);
+            // UI Error Handling
+        }
+
+        console.log('Preferences updated successfully:', data);
+    } catch (error) {
+        console.error('Error updating preferences:', error);
+        // UI Error Handling
+    }
+};
+
+export async function eventsByDate(userId, date) {
+    const eventEntries = document.getElementById('eventEntries');
+    eventEntries.innerHTML = '';
+
+    try {
+        const response = await fetch(`/get_events_by_date/${userId}?date=${date}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const events = await response.json();
+        console.log('Events fetched successfully:', events);
+
+        events.forEach(event => {
+            const row = document.createElement('div');
+            row.innerHTML = `
+                <h3>${event.name}</h3>
+                <button class="collapsible">${event.name} on ${event.date}</button>
+                <div class="content">
+                    <div>
+                        <p>Prep At: ${event.o_prep}</p>
+                    </div>
+                    <div>
+                        <p>Shower At: ${displayValue(event.o_shower)}</p>
+                    </div>
+                    <div>
+                        <p>Get Ready At: ${displayValue(event.o_get_ready)}</p>
+                    </div>
+                    <div>
+                        <p>Leave At: ${event.o_leave}</p>
+                    </div>
+                    <div>
+                        <p>Drive Time: ${event.i_drive}</p>
+                    </div>
+                    <div>
+                        <p>Arrive At: ${amPmConversion(event.i_arrival)}</p>
+                    </div>
+                    <div>
+                        <p>Outcome: ${displayValue(event.result)}</p>
+                    </div>
+                    <div>
+                        <p>Notes: ${displayValue(event.notes)}</p>
+                    </div>
+                </div>
+                            
+                <div>
+                    <p>Result</p>
+                    <input type="radio" id="successful" name="outcome" value="true">
+                    <label for="successful">Successful</label><br>
+                    <input type="radio" id="unsuccessful" name="outcome" value="false">
+                    <label for="unsuccessful">Unsuccessful</label><br>
+                </div><br>
+            
+                <div>
+                    <label for="editNotes">Add Notes</label>
+                    <input type="text" id="editNotes" name="editNotes" placeholder=" ">
+                </div><br>
+            
+                <button type="button" id="submitChanges">Submit Changes</button>
+                <button type="button" id="deleteEvent">Delete Event</button>
+            `;
+            eventEntries.appendChild(row);
+        });
+        // Handle events data, e.g., display it on the page
+        console.log(events);
+        return events;
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        // Optionally handle the error by updating the UI to show an error message
     }
 };

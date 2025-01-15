@@ -1,11 +1,13 @@
-import { getDate, calculateWakeUp, calculateGetReady, calculateDrive, storeInput, displayOutput } from "/static/js/utilities.js";
-import { wakeUpPOST, getReadyPOST, drivePOST, getEventHistory, getUserPreferences, logout, getUserID } from "/static/js/dataService.js"
+import { getDate, calculateWakeUp, calculateGetReady, calculateDrive, storeInput, displayOutput, convertToNumber, defaultButton, collapsibleEvent, toggleButton } from "/static/js/utilities.js";
+import { wakeUpPOST, getReadyPOST, drivePOST, getEventHistory, getUserPreferences, logout, getUserID, updatePreferences, eventsByDate } from "/static/js/dataService.js"
 
 export async function userActions() {
     const pref = await getUserPreferences();
     const user_id = await getUserID();
 
+    var editButton = document.getElementById('edit');
     var preferencesButton = document.getElementById('preferences');
+    var defaultLengthButton = document.getElementById('defaultLength');
     var logoutButton = document.getElementById('logout');
     var eventsContainer = document.getElementById('eventsContainer');
     var wakeUpButton = document.getElementById('wakeUp');
@@ -13,15 +15,18 @@ export async function userActions() {
     var driveButton = document.getElementById('drive');
     var todayDate = getDate();
 
+    if (editButton) {
+        
+    };
+
     if (preferencesButton) {
         preferencesButton.addEventListener('click', function() {
-            let prep = document.getElementById('prepLength').value;
-            let shower = document.getElementById('showerLength').value;
-            let get_ready = document.getElementById('getReadyLength').value;
-            let fluff = document.getElementById('fluffLength').value;
+            let prep = convertToNumber(document.getElementById('prepLength').value);
+            let shower = convertToNumber(document.getElementById('showerLength').value);
+            let getReady = convertToNumber(document.getElementById('getReadyLength').value);
+            let fluff = convertToNumber(document.getElementById('fluffLength').value);
 
-            // Create UPDATE function on server and DataService!!!
-            updatePreferences(user_id, prep, shower, get_ready, fluff);
+            updatePreferences(user_id, prep, shower, getReady, fluff);
         });
     }
 
@@ -33,11 +38,22 @@ export async function userActions() {
         logoutButton.addEventListener('click', function() {
             console.log('User Preferences:', pref.fluff, pref.prep, pref.shower, pref.getReady);
             logout();
-        })
-    }
+        });
+    };
     
     if (eventsContainer) {
-        getEventHistory(user_id);
+        let eventHistory = await getEventHistory(user_id);
+        collapsibleEvent();
+
+        editButton.addEventListener('click', function() {
+            toggleButton();
+        });
+
+        document.getElementById('requestDates').addEventListener('click', async function() {
+            let date = document.getElementById('selectDate').value;
+            let events = await eventsByDate(user_id, date);
+            collapsibleEvent();
+        });
     };
 
     if (wakeUpButton) {

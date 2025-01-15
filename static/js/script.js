@@ -2,25 +2,6 @@ import { login, addUser, addPreferences } from "/static/js/dataService.js"
 import { signUpValidation, getDate, defaultButton } from "/static/js/utilities.js";
 import { userActions } from "/static/js/userActions.js";
 
-/*
-const pref = loadPreferences(user_id);
-var fluff = pref.fluff;
-var prep = pref.prep;
-var shower = pref.shower;
-var getReady = pref.getReady;
-*/
-
-// console.log("DOMContentLoaded")
-
-// console.log('User Preferences:', fluff, prep, shower, getReady);
-
-const prepLength0 = 45;
-const showerLength0 = 30;
-const getReadyLength0 = 30;
-const fluff0 = 15;
-
-
-
 document.addEventListener('DOMContentLoaded', function() {    
     var loginButton = document.getElementById('login');
     var defaultLengthButton = document.getElementById('defaultLength');
@@ -77,36 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     if (window.location.pathname === '/dashboard' || '/profile' || '/eventHistory' || '/editEventHistory' || '/preferences') {
-
-        // Move to User Actions? V V
-        // Create Async function to access preferences then read after for other functions calculations. V V
-
-        /*
-        const pref = await getUserPreferences();
-        var fluff = pref.fluff;
-        var prep = pref.prep;
-        var shower = pref.shower;
-        var getReady = pref.getReady;
-        console.log('User Preferences:', fluff, prep, shower, getReady);
-        */
         userActions();
-    }
+    };
 });
-
-/*
-async function loadPreferences(user_id) {
-    try {
-        const pref = await getUserPreferences(user_id);
-        var fluff = pref.fluff;
-        var prep = pref.prep;
-        var shower = pref.shower;
-        var getReady = pref.getReady;
-
-        // console.log("loadPreferences")
-
-        return { fluff, prep, shower, getReady }
-    } catch (error) {
-        console.error('Error handling preferences:', error);
-    }
-};
-*/

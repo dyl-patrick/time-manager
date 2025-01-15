@@ -4,6 +4,58 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /*
+        Collapsible
+        */
+        .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        }
+
+        .active, .collapsible:hover {
+        background-color: #555;
+        }
+
+        .collapsible:after {
+        content: '\002B';
+        color: white;
+        font-weight: bold;
+        float: right;
+        margin-left: 5px;
+        }
+
+        .active:after {
+        content: "\2212";
+        }
+
+        .content {
+        padding: 0 18px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: #f1f1f1;
+        }
+
+        /*
+        Toggle Edit Button
+        */
+        #toggleDiv {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 5px;
+            width: 200px;
+            background-color: #f9f9f9;
+        }
+
+    </style>
     <title>Event History | Time Manager</title>
 </head>
 <body>
@@ -11,26 +63,45 @@
     
     <h1>Time Manager</h1>
     <h2>Event History</h2>
+
+    <button type="button" id="edit">Edit Events</button>
+
+    <div class="toggleDiv" style="display: none;">
+        <div id="dateSelector">
+            <input type="date" id="selectDate" name="selectDate" placeholder=" ">
+            <label for="selectDate">Select Event Date</label><br>
     
-    <a href="/edit_event_history">Edit</a>
+            <button type="button" id="requestDates">Find Events</button>
+        </div>
+        
+        <div id="eventEntries">
+            <h3>Name of Event</h3>
+        
+            <div>
+                <p>Result</p>
+                <input type="radio" id="successful" name="outcome" value="true">
+                <label for="successful">Successful</label><br>
+                <input type="radio" id="unsuccessful" name="outcome" value="false">
+                <label for="unsuccessful">Unsuccessful</label><br>
+            </div><br>
+        
+            <div>
+                <label for="editNotes">Add Notes</label>
+                <input type="text" id="editNotes" name="editNotes" placeholder=" ">
+            </div><br>
+        
+            <button type="button" id="submitChanges">Submit Changes</button>
+            <button type="button" id="deleteEvent">Delete Event</button>
+        </div>
+    </div>
 
-    <table>
-        <thead>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Prep At</th>
-            <th>Shower At</th>
-            <th>Get Ready At</th>
-            <th>Leave At</th>
-            <th>Drive Time</th>
-            <th>Arrive At</th>
-            <th>Outcome</th>
-            <th>Notes</th>
-        </thead>
-        <tbody id="eventsContainer">
+    
+    
 
-        </tbody>
-    </table>
+    <div id="eventsContainer">
+
+    </div>
+
     <script type="module" src="/static/js/script.js"></script>
 </body>
 </html>
