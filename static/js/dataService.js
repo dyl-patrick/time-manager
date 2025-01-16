@@ -25,7 +25,7 @@ export async function login(username, password) {
     });
 };
 
-export async function addPreferences(user_id, prep, shower, get_ready, fluff, date_created) {
+export async function addPreferences(user_id, windDown, sleep, prep, shower, get_ready, fluff, date_created) {
     fetch('/add_preferences', {
         method: 'POST',
         headers: {
@@ -33,6 +33,8 @@ export async function addPreferences(user_id, prep, shower, get_ready, fluff, da
         },
         body: JSON.stringify({
             user_id: user_id,
+            wind_down: windDown,
+            sleep: sleep,
             prep: prep,
             shower: shower,
             get_ready: get_ready,
@@ -80,6 +82,67 @@ export async function addUser(f_name, l_name, email, username, password) {
         return { valid: false, user_id: null };
         // UI Error Handling
     };
+};
+
+export function windDownPOST(user_id, name, date, i_arrival, i_drive, o_wind_down, o_sleep, o_prep, o_shower, o_get_ready, o_leave) {
+    fetch('/add_event', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            user_id: user_id,
+            name: name,
+            date: date,
+            i_arrival: i_arrival,
+            i_drive: i_drive,
+            o_wind_down: o_wind_down,
+            o_sleep: o_sleep,
+            o_prep: o_prep,
+            o_shower: o_shower,
+            o_get_ready: o_get_ready,
+            o_leave: o_leave,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Event created successfully!');
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating event');
+    });
+};
+
+export function bedtimePOST(user_id, name, date, i_arrival, i_drive, o_sleep, o_prep, o_shower, o_get_ready, o_leave) {
+    fetch('/add_event', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            user_id: user_id,
+            name: name,
+            date: date,
+            i_arrival: i_arrival,
+            i_drive: i_drive,
+            o_sleep: o_sleep,
+            o_prep: o_prep,
+            o_shower: o_shower,
+            o_get_ready: o_get_ready,
+            o_leave: o_leave,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Event created successfully!');
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating event');
+    });
 };
 
 export function wakeUpPOST(user_id, name, date, i_arrival, i_drive, o_prep, o_shower, o_get_ready, o_leave) {
@@ -183,6 +246,12 @@ export async function getEventHistory(userId) {
                 <button class="collapsible">${event.name} on ${event.date}</button>
                 <div class="content">
                     <div>
+                        <p>Wind Down At: ${displayValue(event.o_wind_down)}</p>
+                    </div>
+                    <div>
+                        <p>Sleep At: ${displayValue(event.o_sleep)}</p>
+                    </div>
+                    <div>
                         <p>Prep At: ${event.o_prep}</p>
                     </div>
                     <div>
@@ -223,10 +292,10 @@ export async function getUserPreferences() {
             throw new Error('Failed to fetch preferences');
         }
         const data = await response.json();
-        const { fluff, prep, shower, get_ready: getReady } = data;
-        console.log("Preferences retrieved:", { fluff, prep, shower, getReady });
+        const { fluff, wind_down: windDown, sleep, prep, shower, get_ready: getReady } = data;
+        console.log("Preferences retrieved:", { fluff, windDown, sleep, prep, shower, getReady });
 
-        return { fluff, prep, shower, getReady };
+        return { fluff, windDown, sleep, prep, shower, getReady };
 
     } catch (error) {
         console.error('Error fetching preferences:', error);
@@ -263,7 +332,7 @@ export async function getUserID() {
     }
 };
 
-export async function updatePreferences(userId, prep, shower, getReady, fluff) {
+export async function updatePreferences(userId, windDown, sleep, prep, shower, getReady, fluff) {
     try {
         const response = await fetch(`/update_preferences/${userId}`, {
             method: 'POST',
@@ -271,6 +340,8 @@ export async function updatePreferences(userId, prep, shower, getReady, fluff) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                wind_down: windDown,
+                sleep: sleep,
                 prep: prep,
                 shower: shower,
                 get_ready: getReady,
@@ -313,6 +384,12 @@ export async function eventsByDate(userId, date) {
                 <button class="collapsible">${event.name} on ${event.date}</button>
                 <div class="content">
                     <div>
+                        <p>Wind Down At: ${displayValue(event.o_wind_down)}</p>
+                    </div>
+                    <div>
+                        <p>Sleep At: ${displayValue(event.o_sleep)}</p>
+                    </div>
+                    <div>
                         <p>Prep At: ${event.o_prep}</p>
                     </div>
                     <div>
@@ -337,22 +414,20 @@ export async function eventsByDate(userId, date) {
                         <p>Notes: ${displayValue(event.notes)}</p>
                     </div>
                 </div>
-                            
+
                 <div>
-                    <p>Result</p>
-                    <input type="radio" id="successful" name="outcome" value="true">
-                    <label for="successful">Successful</label><br>
-                    <input type="radio" id="unsuccessful" name="outcome" value="false">
-                    <label for="unsuccessful">Unsuccessful</label><br>
+                    <p>Outcome</p>
+                    <input type="radio" id="successful-${event.event_id}" name="outcome-${event.event_id}" value="true">
+                    <label for="successful-${event.event_id}">Successful</label><br>
+                    <input type="radio" id="unsuccessful-${event.event_id}" name="outcome-${event.event_id}" value="false">
+                    <label for="unsuccessful-${event.event_id}">Unsuccessful</label><br>
                 </div><br>
             
-                <div>
-                    <label for="editNotes">Add Notes</label>
-                    <input type="text" id="editNotes" name="editNotes" placeholder=" ">
-                </div><br>
+                <label for="editNotes-${event.event_id}">Add Notes</label>
+                <input type="text" id="editNotes-${event.event_id}" name="editNotes" placeholder=" "><br>
             
-                <button type="button" id="submitChanges">Submit Changes</button>
-                <button type="button" id="deleteEvent">Delete Event</button>
+                <button type="button" id="submitChanges-${event.event_id}" class="submitChanges" data-event-id="${event.event_id}">Submit Changes</button>
+                <button type="button" id="deleteEvent-${event.event_id}" class="deleteEvent" data-event-id="${event.event_id}">Delete Event</button>
             `;
             eventEntries.appendChild(row);
         });
@@ -362,5 +437,51 @@ export async function eventsByDate(userId, date) {
     } catch (error) {
         console.error('Error fetching events:', error);
         // Optionally handle the error by updating the UI to show an error message
+    }
+};
+
+export async function updateEvent(eventId, result, notes) {
+    try {
+        const response = await fetch(`/update_event/${eventId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                result: result === "true",
+                notes: notes
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const updatedEvent = await response.json();
+        console.log('Event updated successfully:', updatedEvent);
+        alert('Event updated successfully!');
+    } catch (error) {
+        console.error('Error updating event:', error);
+        alert('Error updating event');
+    }
+};
+
+export async function deleteEvent(eventId) {
+    try {
+        const response = await fetch(`/delete_event/${eventId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Delete operation was successful:', result);
+        alert(result.success || result.error); // Display appropriate message from server
+        // Optionally refresh the events list or update the UI
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        alert('Error deleting event');
     }
 };

@@ -10,7 +10,7 @@ app.config['SECRET_KEY'] = b'\xfd\xba\x14\x9b\x80\x91\xbeO\xbdo\xa5\xfa\xf5\x1a\
 db.init_app(app)
 
 from models import User, Preferences, Event_History
-from services.database_operations import add_user as db_add_user, add_event as db_add_event, add_preferences as db_add_preferences
+from services.database_operations import add_user as db_add_user, add_event as db_add_event, add_preferences as db_add_preferences, edit_event as db_edit_event, delete_event as db_delete_event
 
 with app.app_context():
     db.create_all()
@@ -43,9 +43,24 @@ def event_history():
 def preferences():
     return render_template('preferences.html')
 
+@app.route('/delete_event/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    result = db_delete_event(event_id)
+    if 'error' in result:
+        return jsonify(result), 404
+    return jsonify(result), 200
+
+@app.route('/update_event/<int:event_id>', methods=['POST'])
+def update_event(event_id):
+    data = request.get_json()
+    event = db_edit_event(event_id, data.get('result'), data.get('notes'))
+    if not event:
+        return jsonify({'error': 'Event not found'}), 404
+    return jsonify(event.to_dict()), 200
+
 @app.route('/get_events_by_date/<int:user_id>', methods=['GET'])
 def get_events_by_date(user_id):
-    query_date = request.args.get('date')  # Date should be passed as a query parameter
+    query_date = request.args.get('date')
     if query_date:
         query_date = datetime.strptime(query_date, '%Y-%m-%d').date()
         events = Event_History.query.filter_by(user_id=user_id, date=query_date).all()
@@ -57,10 +72,13 @@ def update_preferences(user_id):
     data = request.get_json()
     preferences = Preferences.query.filter_by(user_id=user_id).first()
     if preferences:
+        preferences.wind_down = data.get('wind_down', preferences.wind_down)
+        preferences.sleep = data.get('sleep', preferences.sleep)
         preferences.prep = data.get('prep', preferences.prep)
         preferences.shower = data.get('shower', preferences.shower)
         preferences.get_ready = data.get('get_ready', preferences.get_ready)
         preferences.fluff = data.get('fluff', preferences.fluff)
+        # TO DO: Refactor, add .commit to database_operations!
         db.session.commit()
         return jsonify(preferences.to_dict()), 200
     else:
@@ -96,6 +114,7 @@ def loginRequest():
     if not username or not password:
         return jsonify({'error': 'Username and Password are required'}), 400
 
+    # TO DO: Refactor, add below to database_operations!
     user = User.query.filter_by(username=username).first()
 
     if user and user.check_password(password):
@@ -112,7 +131,7 @@ def logout():
     return jsonify({"message": "Logged out successfully"})
 
 @app.route('/event_history/user/<int:user_id>', methods=['GET'])
-def get_posts_by_user(user_id):
+def get_events_by_user(user_id):
     events = Event_History.query.filter_by(user_id=user_id).all()
     events_data = [event.to_dict() for event in events]
     return jsonify(events_data)
@@ -120,14 +139,17 @@ def get_posts_by_user(user_id):
 @app.route('/add_preferences', methods=['POST'])
 def add_preferences():
     data = request.get_json()
+    print(data)
     user_id = int(data['user_id'])
+    wind_down = int(data['wind_down'])
+    sleep = int(data['sleep'])
     prep = int(data['prep'])
     shower = int(data['shower'])
     get_ready = int(data['get_ready'])
     fluff = int(data['fluff'])
     date_created = datetime.strptime(data['date_created'], '%Y-%m-%d').date()
 
-    preferences = db_add_preferences(user_id=user_id, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
+    preferences = db_add_preferences(user_id=user_id, wind_down=wind_down, sleep=sleep, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
     return jsonify(preferences.to_dict()), 201
 
 @app.route('/add_user', methods=['POST'])
@@ -164,11 +186,13 @@ def add_event():
     i_arrival = datetime.strptime(data['i_arrival'], '%H:%M').time()
     i_drive = int(data['i_drive'])
     # 12-hour format with AM/PM
+    o_wind_down = datetime.strptime(data['o_wind_down'], '%I:%M %p').time() if 'o_wind_down' in data else None
+    o_sleep = datetime.strptime(data['o_sleep'], '%I:%M %p').time() if 'o_sleep' in data else None
     o_prep = datetime.strptime(data['o_prep'], '%I:%M %p').time()
     o_shower = datetime.strptime(data['o_shower'], '%I:%M %p').time() if 'o_shower' in data else None
     o_get_ready = datetime.strptime(data['o_get_ready'], '%I:%M %p').time() if 'o_get_ready' in data else None
     o_leave = datetime.strptime(data['o_leave'], '%I:%M %p').time()
-    event = db_add_event(user_id=user_id, name=name, date=date, i_arrival=i_arrival, i_drive=i_drive, o_prep=o_prep, o_shower=o_shower, o_get_ready=o_get_ready, o_leave=o_leave)
+    event = db_add_event(user_id=user_id, name=name, date=date, i_arrival=i_arrival, i_drive=i_drive, o_wind_down=o_wind_down, o_sleep=o_sleep, o_prep=o_prep, o_shower=o_shower, o_get_ready=o_get_ready, o_leave=o_leave)
     return jsonify(event.to_dict()), 201
 
 if __name__ == "__main__":

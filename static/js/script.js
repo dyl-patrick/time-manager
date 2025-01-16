@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let username = document.getElementById('username').value
             let password = document.getElementById('password').value
 
+            let windDown = document.getElementById('windDownLength').value;
+            let sleep = document.getElementById('sleepLength').value;
             let prep = document.getElementById('prepLength').value;
             let shower = document.getElementById('showerLength').value;
             let get_ready = document.getElementById('getReadyLength').value;
@@ -49,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const { valid, user_id } = await addUser(f_name, l_name, email, username, password);
                 console.log('Add user valid:', valid, 'User ID:', user_id);
                 if (valid) {
-                    addPreferences(user_id, prep, shower, get_ready, fluff, date_created);
+                    addPreferences(user_id, windDown, sleep, prep, shower, get_ready, fluff, date_created);
                 }
             };
 
@@ -57,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    if (window.location.pathname === '/dashboard' || '/profile' || '/eventHistory' || '/editEventHistory' || '/preferences') {
+    if (window.location.pathname === '/dashboard' || '/profile' || '/eventHistory' || '/preferences') {
         userActions();
     };
 });

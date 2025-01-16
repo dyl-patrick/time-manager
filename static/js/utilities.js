@@ -1,16 +1,17 @@
 function hoursToMinutes(time) {
-    const [hours, minutes] = time.split(':').map(Number);
+    let [hours, minutes] = time.split(':').map(Number);
 
-    const totalMinutes = (hours * 60) + minutes;
-    return totalMinutes;
+    return (hours * 60) + minutes;
 };
 
-function convertToStandardTime(newMinutes) {
-    const hours = Math.floor(newMinutes / 60);
-    const newerMinutes = newMinutes % 60;
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const standardHour = hours % 12 || 12;
-    const formattedMinutes = newerMinutes < 10 ? '0' + newerMinutes : newerMinutes;
+function convertToStandardTime(minutes) {
+    const totalMinutesInDay = 1440; // Total minutes in a day
+    let normalizedMinutes = (minutes + totalMinutesInDay) % totalMinutesInDay; // Normalize negative minutes
+    let hours = Math.floor(normalizedMinutes / 60);
+    let remainingMinutes = normalizedMinutes % 60;
+    let period = hours >= 12 && hours < 24 ? 'PM' : 'AM'; // Correct the period based on 24-hour format
+    let standardHour = hours % 12 || 12; // Convert 24-hour time to 12-hour format
+    let formattedMinutes = remainingMinutes < 10 ? '0' + remainingMinutes : remainingMinutes;
 
     return `${standardHour}:${formattedMinutes} ${period}`;
 }
@@ -89,12 +90,88 @@ export function signUpValidation(email, username, password, valid) {
 
 export function defaultButton() {
     document.getElementById('defaultLength').addEventListener('click', function() {
+        document.getElementById('windDownLength').value = 90;
+        document.getElementById('sleepLength').value = 480;
         document.getElementById('prepLength').value = 45;
         document.getElementById('showerLength').value = 30;
         document.getElementById('getReadyLength').value = 30;
         document.getElementById('fluffLength').value = 15;
     });
 }
+
+export function calculateWindDown({ arriveTime, driveTime }, { fluff, prep, shower, getReady, sleep, windDown }) {
+    console.log(fluff, getReady, shower, prep, sleep, windDown)
+    
+    arriveTime = hoursToMinutes(arriveTime);
+    let arriveTimeFinal = convertToStandardTime(arriveTime);
+    
+    let leaveBy = arriveTime - driveTime - fluff;
+    let leaveByFinal = convertToStandardTime(leaveBy);
+    
+    let getReadyBy = leaveBy - getReady;
+    let getReadyByFinal = convertToStandardTime(getReadyBy);
+    
+    let showerBy = getReadyBy - shower;
+    let showerByFinal = convertToStandardTime(showerBy);
+    
+    let prepBy = showerBy - prep;
+    let prepByFinal = convertToStandardTime(prepBy);
+    
+    let sleepBy = prepBy - sleep;
+    let sleepByFinal = convertToStandardTime(sleepBy);
+    
+    let windDownBy = sleepBy - windDown;
+    let windDownByFinal = convertToStandardTime(windDownBy);
+
+    return {
+        tasks: [
+            { name: "Wind Down At", time: windDownByFinal },
+            { name: "Sleep At", time: sleepByFinal },
+            { name: "Prep At", time: prepByFinal },
+            { name: "Shower At", time: showerByFinal },
+            { name: "Get Ready At", time: getReadyByFinal },
+            { name: "Leave At", time: leaveByFinal },
+            { name: "Arrive At", time: arriveTimeFinal }
+        ],
+        windDownByFinal, sleepByFinal, prepByFinal, showerByFinal, getReadyByFinal, leaveByFinal, arriveTimeFinal
+    };
+
+};
+
+export function calculateBedtime({ arriveTime, driveTime }, { fluff, prep, shower, getReady, sleep }) {
+    console.log(fluff, getReady, shower, prep, sleep)
+    
+    arriveTime = hoursToMinutes(arriveTime);
+    let arriveTimeFinal = convertToStandardTime(arriveTime);
+    
+    let leaveBy = arriveTime - driveTime - fluff;
+    let leaveByFinal = convertToStandardTime(leaveBy);
+    
+    let getReadyBy = leaveBy - getReady;
+    let getReadyByFinal = convertToStandardTime(getReadyBy);
+    
+    let showerBy = getReadyBy - shower;
+    let showerByFinal = convertToStandardTime(showerBy);
+    
+    let prepBy = showerBy - prep;
+    let prepByFinal = convertToStandardTime(prepBy);
+    
+    let sleepBy = prepBy - sleep;
+    let sleepByFinal = convertToStandardTime(sleepBy);
+
+    return {
+        tasks: [
+            { name: "Sleep At", time: sleepByFinal },
+            { name: "Prep At", time: prepByFinal },
+            { name: "Shower At", time: showerByFinal },
+            { name: "Get Ready At", time: getReadyByFinal },
+            { name: "Leave At", time: leaveByFinal },
+            { name: "Arrive At", time: arriveTimeFinal }
+        ],
+        sleepByFinal, prepByFinal, showerByFinal, getReadyByFinal, leaveByFinal, arriveTimeFinal
+    };
+
+};
 
 export function calculateWakeUp({ arriveTime, driveTime }, { fluff, prep, shower, getReady }) {
     console.log(fluff, getReady, shower, prep)

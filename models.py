@@ -44,6 +44,8 @@ class Preferences(db.Model):
     
     pref_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), unique=True)
+    wind_down = db.Column(db.Integer, nullable=False)
+    sleep = db.Column(db.Integer, nullable=False)
     prep = db.Column(db.Integer, nullable=False)
     shower = db.Column(db.Integer, nullable=False)
     get_ready = db.Column(db.Integer, nullable=False)
@@ -51,8 +53,10 @@ class Preferences(db.Model):
     date_created = db.Column(db.Date, nullable=False)
     user = db.relationship('User', back_populates='preferences')
 
-    def __init__(self, user_id, prep, shower, get_ready, fluff, date_created):
+    def __init__(self, user_id, wind_down, sleep, prep, shower, get_ready, fluff, date_created):
         self.user_id = user_id
+        self.wind_down = wind_down
+        self.sleep = sleep
         self.prep = prep
         self.shower = shower
         self.get_ready = get_ready
@@ -66,6 +70,8 @@ class Preferences(db.Model):
         return {
         'pref_id': self.pref_id,
         'user_id': self.user_id,
+        'wind_down': self.wind_down,
+        'sleep': self.sleep,
         'prep': self.prep,
         'shower': self.shower,
         'get_ready': self.get_ready,
@@ -82,6 +88,8 @@ class Event_History(db.Model):
     date = db.Column(db.Date, nullable=False)
     i_arrival = db.Column(db.Time, nullable=False)
     i_drive = db.Column(db.Integer, nullable=False)
+    o_wind_down = db.Column(db.Time)
+    o_sleep = db.Column(db.Time)
     o_prep = db.Column(db.Time, nullable=False)
     o_shower = db.Column(db.Time)
     o_get_ready = db.Column(db.Time)
@@ -89,12 +97,14 @@ class Event_History(db.Model):
     result = db.Column(db.Boolean)
     notes = db.Column(db.Text)
 
-    def __init__(self, user_id, name, date, i_arrival, i_drive, o_prep, o_shower, o_get_ready, o_leave):
+    def __init__(self, user_id, name, date, i_arrival, i_drive, o_wind_down, o_sleep, o_prep, o_shower, o_get_ready, o_leave):
         self.user_id = user_id
         self.name = name
         self.date = date
         self.i_arrival = i_arrival
         self.i_drive = i_drive
+        self.o_wind_down = o_wind_down
+        self.o_sleep = o_sleep
         self.o_prep = o_prep
         self.o_shower = o_shower
         self.o_get_ready = o_get_ready
@@ -113,6 +123,8 @@ class Event_History(db.Model):
         'date': self.date.isoformat() if self.date else None,
         'i_arrival': self.i_arrival.strftime('%H:%M') if self.i_arrival else None,
         'i_drive': self.i_drive,
+        'o_wind_down': self.o_wind_down.strftime('%I:%M %p') if self.o_wind_down else None,
+        'o_sleep': self.o_sleep.strftime('%I:%M %p') if self.o_sleep else None,
         'o_prep': self.o_prep.strftime('%I:%M %p') if self.o_prep else None,
         'o_shower': self.o_shower.strftime('%I:%M %p') if self.o_shower else None,
         'o_get_ready': self.o_get_ready.strftime('%I:%M %p') if self.o_get_ready else None,
