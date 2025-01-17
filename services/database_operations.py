@@ -14,6 +14,22 @@ def add_event(user_id, name, date, i_arrival, i_drive, o_wind_down, o_sleep, o_p
     db.session.commit()
     return new_event
 
+def add_preferences(user_id, wind_down, sleep, prep, shower, get_ready, fluff, date_created):
+    new_preferences = Preferences(user_id=user_id, wind_down=wind_down, sleep=sleep, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
+    db.session.add(new_preferences)
+    db.session.commit()
+    return new_preferences
+
+    # login_request
+
+# Read
+    # get_preferences
+    # get_events_by_user
+    # get_events_by_date
+
+# Update
+    # update_preferences
+
 def edit_event(event_id, result, notes):
     event = Event_History.query.get(event_id)
     if not event:
@@ -23,6 +39,7 @@ def edit_event(event_id, result, notes):
     db.session.commit()
     return event
 
+# Delete
 def delete_event(event_id):
     event = Event_History.query.get(event_id)
     if event:
@@ -31,13 +48,3 @@ def delete_event(event_id):
         return {'success': 'Event deleted successfully'}
     else:
         return {'error': 'Event not found'}
-
-def add_preferences(user_id, wind_down, sleep, prep, shower, get_ready, fluff, date_created):
-    new_preferences = Preferences(user_id=user_id, wind_down=wind_down, sleep=sleep, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
-    db.session.add(new_preferences)
-    db.session.commit()
-    return new_preferences
-
-# Update
-    # Edit Event History
-    # Preferences

@@ -43,114 +43,26 @@ def event_history():
 def preferences():
     return render_template('preferences.html')
 
-@app.route('/delete_event/<int:event_id>', methods=['DELETE'])
-def delete_event(event_id):
-    result = db_delete_event(event_id)
-    if 'error' in result:
-        return jsonify(result), 404
-    return jsonify(result), 200
 
-@app.route('/update_event/<int:event_id>', methods=['POST'])
-def update_event(event_id):
+# Create
+@app.route('/add_event', methods=['POST'])
+def add_event():
     data = request.get_json()
-    event = db_edit_event(event_id, data.get('result'), data.get('notes'))
-    if not event:
-        return jsonify({'error': 'Event not found'}), 404
-    return jsonify(event.to_dict()), 200
-
-@app.route('/get_events_by_date/<int:user_id>', methods=['GET'])
-def get_events_by_date(user_id):
-    query_date = request.args.get('date')
-    if query_date:
-        query_date = datetime.strptime(query_date, '%Y-%m-%d').date()
-        events = Event_History.query.filter_by(user_id=user_id, date=query_date).all()
-        return jsonify([event.to_dict() for event in events]), 200
-    return jsonify({'error': 'Missing date parameter'}), 400
-
-@app.route('/update_preferences/<int:user_id>', methods=['POST'])
-def update_preferences(user_id):
-    data = request.get_json()
-    preferences = Preferences.query.filter_by(user_id=user_id).first()
-    if preferences:
-        preferences.wind_down = data.get('wind_down', preferences.wind_down)
-        preferences.sleep = data.get('sleep', preferences.sleep)
-        preferences.prep = data.get('prep', preferences.prep)
-        preferences.shower = data.get('shower', preferences.shower)
-        preferences.get_ready = data.get('get_ready', preferences.get_ready)
-        preferences.fluff = data.get('fluff', preferences.fluff)
-        # TO DO: Refactor, add .commit to database_operations!
-        db.session.commit()
-        return jsonify(preferences.to_dict()), 200
-    else:
-        return jsonify({'error': 'Preferences not found'}), 404
-
-@app.route('/get_user_id', methods=['GET'])
-def get_user_id():
-    if 'user_id' in session:
-        user_id = session['user_id']
-        if user_id:
-            return jsonify(user_id)
-        else:
-            return jsonify({'error': 'User ID not found'}), 404
-    return jsonify({'message': 'User not authenticated'}), 401
-
-@app.route('/get_preferences', methods=['GET'])
-def get_preferences():
-    if 'user_id' in session:
-        user_id = session['user_id']
-        preferences = Preferences.query.filter_by(user_id=user_id).first()
-        if preferences:
-            return jsonify(preferences.to_dict())
-        else:
-            return jsonify({'error': 'Preferences not found'}), 404
-    return jsonify({'message': 'User not authenticated'}), 401
-
-@app.route('/login-request', methods=['POST'])
-def loginRequest():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-
-    if not username or not password:
-        return jsonify({'error': 'Username and Password are required'}), 400
-
-    # TO DO: Refactor, add below to database_operations!
-    user = User.query.filter_by(username=username).first()
-
-    if user and user.check_password(password):
-        # Login successful, set up user session
-        session['user_id'] = user.user_id
-        return jsonify({'message': 'Logged in successfully'}), 200
-    else:
-        # Invalid credentials
-        return jsonify({'error': 'Invalid username or password'}), 401
-    
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.pop('user_id', None)
-    return jsonify({"message": "Logged out successfully"})
-
-@app.route('/event_history/user/<int:user_id>', methods=['GET'])
-def get_events_by_user(user_id):
-    events = Event_History.query.filter_by(user_id=user_id).all()
-    events_data = [event.to_dict() for event in events]
-    return jsonify(events_data)
-
-@app.route('/add_preferences', methods=['POST'])
-def add_preferences():
-    data = request.get_json()
-    print(data)
-    user_id = int(data['user_id'])
-    wind_down = int(data['wind_down'])
-    sleep = int(data['sleep'])
-    prep = int(data['prep'])
-    shower = int(data['shower'])
-    get_ready = int(data['get_ready'])
-    fluff = int(data['fluff'])
-    date_created = datetime.strptime(data['date_created'], '%Y-%m-%d').date()
-
-    preferences = db_add_preferences(user_id=user_id, wind_down=wind_down, sleep=sleep, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
-    return jsonify(preferences.to_dict()), 201
+    user_id = data['user_id']
+    name = data['name']
+    date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+    # 24-hour format
+    i_arrival = datetime.strptime(data['i_arrival'], '%H:%M').time()
+    i_drive = int(data['i_drive'])
+    # 12-hour format with AM/PM
+    o_wind_down = datetime.strptime(data['o_wind_down'], '%I:%M %p').time() if 'o_wind_down' in data else None
+    o_sleep = datetime.strptime(data['o_sleep'], '%I:%M %p').time() if 'o_sleep' in data else None
+    o_prep = datetime.strptime(data['o_prep'], '%I:%M %p').time()
+    o_shower = datetime.strptime(data['o_shower'], '%I:%M %p').time() if 'o_shower' in data else None
+    o_get_ready = datetime.strptime(data['o_get_ready'], '%I:%M %p').time() if 'o_get_ready' in data else None
+    o_leave = datetime.strptime(data['o_leave'], '%I:%M %p').time()
+    event = db_add_event(user_id=user_id, name=name, date=date, i_arrival=i_arrival, i_drive=i_drive, o_wind_down=o_wind_down, o_sleep=o_sleep, o_prep=o_prep, o_shower=o_shower, o_get_ready=o_get_ready, o_leave=o_leave)
+    return jsonify(event.to_dict()), 201
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
@@ -172,28 +84,122 @@ def add_user():
     user = db_add_user(f_name=data['f_name'], l_name=data['l_name'], email=data['email'], username=data['username'], password=data['password'])
     return jsonify(user.to_dict()), 201
 
-@app.route('/add_event', methods=['POST'])
-def add_event():
+@app.route('/add_preferences', methods=['POST'])
+def add_preferences():
     data = request.get_json()
+    print(data)
+    user_id = int(data['user_id'])
+    wind_down = int(data['wind_down'])
+    sleep = int(data['sleep'])
+    prep = int(data['prep'])
+    shower = int(data['shower'])
+    get_ready = int(data['get_ready'])
+    fluff = int(data['fluff'])
+    date_created = datetime.strptime(data['date_created'], '%Y-%m-%d').date()
 
-    # Validation
+    preferences = db_add_preferences(user_id=user_id, wind_down=wind_down, sleep=sleep, prep=prep, shower=shower, get_ready=get_ready, fluff=fluff, date_created=date_created)
+    return jsonify(preferences.to_dict()), 201
 
-    # Store in database
-    user_id = data['user_id']
-    name = data['name']
-    date = datetime.strptime(data['date'], '%Y-%m-%d').date()
-    # 24-hour format
-    i_arrival = datetime.strptime(data['i_arrival'], '%H:%M').time()
-    i_drive = int(data['i_drive'])
-    # 12-hour format with AM/PM
-    o_wind_down = datetime.strptime(data['o_wind_down'], '%I:%M %p').time() if 'o_wind_down' in data else None
-    o_sleep = datetime.strptime(data['o_sleep'], '%I:%M %p').time() if 'o_sleep' in data else None
-    o_prep = datetime.strptime(data['o_prep'], '%I:%M %p').time()
-    o_shower = datetime.strptime(data['o_shower'], '%I:%M %p').time() if 'o_shower' in data else None
-    o_get_ready = datetime.strptime(data['o_get_ready'], '%I:%M %p').time() if 'o_get_ready' in data else None
-    o_leave = datetime.strptime(data['o_leave'], '%I:%M %p').time()
-    event = db_add_event(user_id=user_id, name=name, date=date, i_arrival=i_arrival, i_drive=i_drive, o_wind_down=o_wind_down, o_sleep=o_sleep, o_prep=o_prep, o_shower=o_shower, o_get_ready=o_get_ready, o_leave=o_leave)
-    return jsonify(event.to_dict()), 201
+@app.route('/login-request', methods=['POST'])
+def login_request():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'error': 'Username and Password are required'}), 400
+
+    # TO DO: Refactor function to database_operations! (Any direct model interaction)
+    user = User.query.filter_by(username=username).first()
+
+    if user and user.check_password(password):
+        session['user_id'] = user.user_id
+        return jsonify({'message': 'Logged in successfully'}), 200
+    else:
+        return jsonify({'error': 'Invalid username or password'}), 401
+    
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    return jsonify({"message": "Logged out successfully"})
+
+
+# Read
+@app.route('/get_preferences', methods=['GET'])
+def get_preferences():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        # TO DO: Refactor function to database_operations! (Any direct model interaction)
+        preferences = Preferences.query.filter_by(user_id=user_id).first()
+        if preferences:
+            return jsonify(preferences.to_dict())
+        else:
+            return jsonify({'error': 'Preferences not found'}), 404
+    return jsonify({'message': 'User not authenticated'}), 401
+
+@app.route('/get_user_id', methods=['GET'])
+def get_user_id():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        if user_id:
+            return jsonify(user_id)
+        else:
+            return jsonify({'error': 'User ID not found'}), 404
+    return jsonify({'message': 'User not authenticated'}), 401
+
+@app.route('/event_history/user/<int:user_id>', methods=['GET'])
+def get_events_by_user(user_id):
+    # TO DO: Refactor function to database_operations! (Any direct model interaction)
+    events = Event_History.query.filter_by(user_id=user_id).all()
+    events_data = [event.to_dict() for event in events]
+    return jsonify(events_data)
+
+@app.route('/get_events_by_date/<int:user_id>', methods=['GET'])
+def get_events_by_date(user_id):
+    query_date = request.args.get('date')
+    if query_date:
+        query_date = datetime.strptime(query_date, '%Y-%m-%d').date()
+        # TO DO: Refactor function to database_operations! (Any direct model interaction)
+        events = Event_History.query.filter_by(user_id=user_id, date=query_date).all()
+        return jsonify([event.to_dict() for event in events]), 200
+    return jsonify({'error': 'Missing date parameter'}), 400
+
+
+# Update
+@app.route('/update_event/<int:event_id>', methods=['POST'])
+def update_event(event_id):
+    data = request.get_json()
+    event = db_edit_event(event_id, data.get('result'), data.get('notes'))
+    if not event:
+        return jsonify({'error': 'Event not found'}), 404
+    return jsonify(event.to_dict()), 200
+
+@app.route('/update_preferences/<int:user_id>', methods=['POST'])
+def update_preferences(user_id):
+    data = request.get_json()
+    # TO DO: Refactor function to database_operations! (Any direct model interaction)
+    preferences = Preferences.query.filter_by(user_id=user_id).first()
+    if preferences:
+        preferences.wind_down = data.get('wind_down', preferences.wind_down)
+        preferences.sleep = data.get('sleep', preferences.sleep)
+        preferences.prep = data.get('prep', preferences.prep)
+        preferences.shower = data.get('shower', preferences.shower)
+        preferences.get_ready = data.get('get_ready', preferences.get_ready)
+        preferences.fluff = data.get('fluff', preferences.fluff)
+        # TO DO: Refactor function to database_operations! (Any direct model interaction)
+        db.session.commit()
+        return jsonify(preferences.to_dict()), 200
+    else:
+        return jsonify({'error': 'Preferences not found'}), 404
+
+
+# Delete
+@app.route('/delete_event/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    result = db_delete_event(event_id)
+    if 'error' in result:
+        return jsonify(result), 404
+    return jsonify(result), 200
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -5,12 +5,12 @@ function hoursToMinutes(time) {
 };
 
 function convertToStandardTime(minutes) {
-    const totalMinutesInDay = 1440; // Total minutes in a day
-    let normalizedMinutes = (minutes + totalMinutesInDay) % totalMinutesInDay; // Normalize negative minutes
+    const totalMinutesInDay = 1440;
+    let normalizedMinutes = (minutes + totalMinutesInDay) % totalMinutesInDay;
     let hours = Math.floor(normalizedMinutes / 60);
     let remainingMinutes = normalizedMinutes % 60;
-    let period = hours >= 12 && hours < 24 ? 'PM' : 'AM'; // Correct the period based on 24-hour format
-    let standardHour = hours % 12 || 12; // Convert 24-hour time to 12-hour format
+    let period = hours >= 12 && hours < 24 ? 'PM' : 'AM';
+    let standardHour = hours % 12 || 12;
     let formattedMinutes = remainingMinutes < 10 ? '0' + remainingMinutes : remainingMinutes;
 
     return `${standardHour}:${formattedMinutes} ${period}`;
@@ -42,7 +42,7 @@ export function amPmConversion(time) {
 
 export function toggleButton() {
     var divs = document.getElementsByClassName('toggleDiv');
-    for (let div of divs) {  // Loop through all elements with the class 'toggleDiv'
+    for (let div of divs) {  // Loop elements with class 'toggleDiv'
         if (div.style.display === 'none') {
             div.style.display = 'block';
         } else {
