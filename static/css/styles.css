@@ -1,3 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    @apply bg-dark-grey;
+}
+
+body, p, h1, h2, h3 {
+    @apply text-soft-white;
+}
+
+h1 {
+    @apply text-2xl font-bold;
+}
+
+h2 {
+    @apply text-xl font-bold;
+}
+
+h3 {
+    @apply text-lg;
+}
+
+input {
+    @apply text-dark-grey mt-1 w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+}
+
+.btn-primary {
+    @apply text-center p-2 bg-primary-blue rounded-lg;
+}
+
+.btn-secondary {
+    @apply text-center p-2 bg-secondary-gray rounded-lg;
+}
+
+.floating-label {
+    @apply relative;
+}
+
+.floating-label input {
+    @apply border-b-2 border-gray-300 focus:outline-none focus:border-indigo-500 placeholder-transparent;
+    transition: all 0.3s ease;
+}
+
+.floating-label label {
+    @apply absolute left-3 text-gray-500 transition-all;
+    top: 45%;
+    transform: translateY(-50%);
+}
+
+.floating-label input:focus ~ label, 
+.floating-label input:not(:placeholder-shown) ~ label {
+    @apply top-0 text-indigo-500 text-sm;
+    transform: translateY(-100%);
+}

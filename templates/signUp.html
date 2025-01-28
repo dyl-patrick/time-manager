@@ -5,63 +5,135 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | Time Manager</title>
-    <!--<link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">-->
+    <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
 </head>
-<body>
-    <h1>Time Manager</h1>
-    <h2>Sign Up</h2>
 
-    <!--Revise method, action, and submit button. Maybe need to change page w/JavaScript after validation-->
-    <form method="post" action="getReady.html">
-        <section>
-            <label for="f_name">First Name</label><br>
-            <input type="text" id="f_name" name="f_name" required><br>
-    
-            <label for="l_name">Last Name</label><br>
-            <input type="text" id="l_name" name="l_name" required><br>
-    
-            <label for="email">Email</label><br>
-            <input type="email" id="email" name="email" required><br>
-            <small>Email should be in the format: user@example.com</small><br>
-    
-            <label for="username">Username</label><br>
-            <input type="text" id="username" name="username" required><br>
-            <small>Username should be at least 8 characters long.</small><br>
-    
-            <label for="password">Password</label><br>
-            <input type="password" id="password" name="password" required><br>
-            <small>Password must contain at least one number, one uppercase letter, one lowercase letter, and be at least 8 characters long.</small><br>
-        </section>
+<!--
+    <body>
+        <div class="flex flex-col p-20 px-32 space-y-32 bg-med-grey rounded-2xl">
+            <h1 class="text-2xl text-soft-white font-bold">Time Manager</h1>
+        
+            <div class="flex flex-col justify-center text-center space-y-16">
+                <a href="/login" class="p-2 text-soft-white bg-primary-blue rounded-lg">Login</a>
+                <a href="/signUp" class="p-2 text-soft-white bg-secondary-gray rounded-lg">Sign Up</a>
+            </div>
+        </div>
+    </body>
+-->
 
-        <section>
-            <label for="windDownLength">Wind Down Length</label>
-            <input type="text" id="windDownLength" name="windDownLength"><br>
 
-            <label for="sleepLength">Sleep Length</label>
-            <input type="text" id="sleepLength" name="sleepLength"><br>
-            
-            <label for="prepLength">Prep Length</label>
-            <input type="text" id="prepLength" name="prepLength"><br>
+<body class="flex min-h-dvh flex-col">
+    <div class="relative flex grow flex-col items-center justify-center mx-4">
 
-            <label for="showerLength">Shower Length</label>
-            <input type="text" id="showerLength" name="showerLength"><br>
+        <header class="flex flex-col justify-center items-center mt-5">
+            <h2>Time Manager</h2>
+        </header>
 
-            <label for="getReadyLength">Get Ready Length</label>
-            <input type="text" id="getReadyLength" name="getReadyLength"><br>
+        <main class="relative flex w-full grow flex-col items-center justify-center mt-24">
 
-            <label for="fluffLength">Fluff Length</label>
-            <input type="text" id="fluffLength" name="fluffLength">
-        </section>
+            <h1 class="font-semibold text-[32px]">Sign Up</h1>
 
-        <button type="button" id="signUp">Sign Up</button>
-        <button type="button" id="defaultLength">Default Lengths</button>
-        <input type="reset" value="Clear">
-        <!--
-            <a href="getReady.html">
-                <input type="submit" value="Sign Up">
-            </a>
-        -->
-    </form>
+            <div class="mt-10">
+                <div class="flex flex-col items-center max-w-96">
+                    <form class="flex flex-col" method="post" action="getReady.html">
+                        <section class="mb-5">
+                            <div class="md:flex md:flex-row md:space-x-4">
+                                <div class="mb-7 floating-label">
+                                    <input class="peer" type="text" id="f_name" name="f_name" placeholder=" " required>
+                                    <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="f_name">First Name<small class="text-xs">*</small></label>
+                                </div>
+                                <div class="mb-7 floating-label">
+                                    <input class="peer" type="text" id="l_name" name="l_name" placeholder=" " required>
+                                    <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="l_name">Last Name<small class="text-xs">*</small></label>
+                                </div>
+                            </div>
+                            <div class="mb-7">
+                                <div class="floating-label">
+                                    <input class="peer" type="email" id="email" name="email" placeholder=" " required><br>
+                                    <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[52%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="email">Email<small class="text-xs">*</small></label>
+                                </div>
+                                <div id="email-error">
+                                    <small class="text-xs text-error-red">Email should be in the format: user@example.com</small>
+                                </div>
+                            </div>
+                            <div class="mb-7">
+                                <div class="floating-label">
+                                    <input class="peer" type="text" id="username" name="username" placeholder=" " required>
+                                    <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[52%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="username">Username<small class="text-xs">*</small></label>
+                                </div>
+                                <div id="username-error">
+                                    <small class="text-xs text-error-red">Username should be at least 8 characters long.</small>
+                                </div>
+                            </div>
+                            <div class="mb-7">
+                                <div class="floating-label">
+                                    <input class="peer" type="password" id="password" name="password" placeholder=" " required>
+                                    <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[52%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="password">Password<small class="text-xs">*</small></label>
+                                </div>
+                                <div id="password-error">
+                                    <small class="text-xs text-error-red">Password must contain at least one number, one uppercase letter, one lowercase letter, and be at least 8 characters long.</small>
+                                </div>
+                            </div>
+                        </section>
+                
+                        <h3 class="font-semibold">Create Time Lengths <span>(info button)</span></h3>
+                        <p>Place Holder for Explanation of Lengths</p>
+                        <p>TO DO: Fix Clear Button (Only Clear Time Lengths)</p>
+
+                        <section class="mt-5">
+                            <div class="mb-7 floating-label">
+                                <input class="peer" type="text" id="windDownLength" name="windDownLength" placeholder=" " required>
+                                <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="windDownLength">Wind Down Length<small class="text-xs">*</small></label>
+                            </div>
+                            <div class="mb-7 floating-label">
+                                <input class="peer" type="text" id="sleepLength" name="sleepLength" placeholder=" " required>
+                                <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="sleepLength">Sleep Length<small class="text-xs">*</small></label>
+                            </div>
+                            <div class="mb-7 floating-label">
+                                <input class="peer" type="text" id="prepLength" name="prepLength" placeholder=" " required>
+                                <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="prepLength">Prep Length<small class="text-xs">*</small></label>
+                            </div>
+                            <div class="mb-7 floating-label">
+                                <input class="peer" type="text" id="showerLength" name="showerLength" placeholder=" " required>
+                                <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="showerLength">Shower Length<small class="text-xs">*</small></label>
+                            </div>
+                            <div class="mb-7 floating-label">
+                                <input class="peer" type="text" id="getReadyLength" name="getReadyLength" placeholder=" " required>
+                                <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="getReadyLength">Get Ready Length<small class="text-xs">*</small></label>
+                            </div>
+                            <div class="mb-5 floating-label">
+                                <input class="peer" type="text" id="fluffLength" name="fluffLength" placeholder=" " required>
+                                <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[53%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="fluffLength">Fluff Length<small class="text-xs">*</small></label>
+                            </div>
+                        </section>
+                        <div class="flex flex-col w-full">
+                            <div class="md:flex md:flex-row md:space-x-2">
+                                <button class="btn-secondary mt-2 w-full" type="button" id="defaultLength">Default Lengths</button>
+                                <input class="btn-secondary mt-2 w-full" type="reset" value="Clear">
+                            </div>
+                            <button class="btn-primary mb-2 my-2" type="button" id="signUp">Sign Up</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+            <p class="text-xs">Already have an account? <a href="/login" class="underline">Login</a></p>
+
+        </main>
+
+        <footer class="mt-24 mb-5 flex flex-col justify-center">
+            <div class="flex justify-center">
+                <p>Dylan Patrick</p>
+            </div>
+            <div class="flex gap-3 py-2 text-xs">
+                <a class="underline" target="_blank" href="https://github.com/dyl-patrick">GitHub</a>
+                <p> | </p>
+                <a class="underline" target="_blank" href="https://dylanpatrick.netlify.app/">Portfolio</a>
+            </div>
+        </footer>
+        
+    </div>
 
     <script type="module" src="/static/js/script.js"></script>
 </body>

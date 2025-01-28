@@ -5,28 +5,76 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Time Manager</title>
-    <!--<link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">-->
+    <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
 </head>
-<body>
-    <h1>Time Manager</h1>
-    <h2>Login</h2>
+<body class="flex min-h-dvh w-screen flex-col">
+    <!--
+    <div class="flex min-h-screen justify-center items-center">  
+        <div class="flex flex-col p-10 bg-med-grey rounded-2xl">
+            <h1>Time Manager</h1>
+            <div class="flex flex-col justify-center text-center">
+                <a href="/login" class="p-2 bg-primary-blue rounded-lg">Log in</a>
+                <a href="/signUp" class="p-2 bg-secondary-gray rounded-lg">Sign up</a>
+            </div>
+        </div>
+    </div>
+    -->
 
-    <!--Revise method, action, and submit button. Maybe need to change page w/JavaScript after validation-->
-    <form method="POST" action="getReady.html">
-        <label for="username">Username</label><br>
-        <input type="text" id="username" name="username"><br>
+    <!--
+        <body class="bg-gray-100 p-8">
+        </body>
+    -->
 
-        <label for="password">Password</label><br>
-        <input type="password" id="password" name="password"><br>
+    <div class="relative flex grow flex-col items-center justify-center mx-4">
+        <header class="flex flex-col justify-center text-center mt-5">
+            <h2>Time Manager</h2>
+        </header>
+        <main class="relative flex w-full grow flex-col items-center justify-center">
+            <h1 class="font-semibold text-[32px]">Welcome Back</h1>
 
-        <!--
-            <a href="getReady.html">
-                <input type="submit" value="Login">
-            </a>
-        -->
-
-        <button type="button" id="login">Login</button>
-    </form>
+            <div class="mt-10 w-full">
+                <div class="flex flex-col items-center">
+                    <div class="flex flex-col">
+                        <!--Revise method, action, and submit button. Maybe need to change page w/JavaScript after validation-->
+                        <form method="POST" action="getReady.html">
+                            <div class="mb-8 floating-label">
+                                <input class="peer" type="text" id="username" name="username" placeholder=" ">
+                                <label for="username" class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[55%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm">Username</label>
+                            </div>
+                            
+                            <div class="mb-1 floating-label">
+                                <input class="peer" type="password" id="password" name="password" placeholder=" ">
+                                <label for="password" class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[55%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm">Password</label>
+                            </div>
+    
+                            <div id="error" class="text-error-red">
+                                Error Message
+                            </div>
+                    
+                            <!--
+                                <a href="getReady.html">
+                                    <input type="submit" value="Login">
+                                </a>
+                            -->
+                        </form>
+                        <button class="btn-primary my-5" type="button" id="login">Login</button>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs">Don't have an account? <a href="/signUp" class="underline">Sign Up</a></p>
+        </main>
+        
+        <footer class="mb-5 flex flex-col justify-center">
+            <div class="flex justify-center">
+                <p>Dylan Patrick</p>
+            </div>
+            <div class="flex gap-3 py-2 text-xs">
+                <a class="underline" target="_blank" href="https://github.com/dyl-patrick">GitHub</a>
+                <p> | </p>
+                <a class="underline" target="_blank" href="https://dylanpatrick.netlify.app/">Portfolio</a>
+            </div>
+        </footer>
+    </div>
 
     <script type="module" src="/static/js/script.js"></script>
 </body>
