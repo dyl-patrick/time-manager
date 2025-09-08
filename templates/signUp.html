@@ -5,34 +5,55 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | Time Manager</title>
-    <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
+    <!--<link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">-->
 </head>
+<body>
+    <h1>Time Manager</h1>
+    <h2>Sign Up</h2>
 
-<!--
-    <body>
-        <div class="flex flex-col p-20 px-32 space-y-32 bg-med-grey rounded-2xl">
-            <h1 class="text-2xl text-soft-white font-bold">Time Manager</h1>
-        
-            <div class="flex flex-col justify-center text-center space-y-16">
-                <a href="/login" class="p-2 text-soft-white bg-primary-blue rounded-lg">Login</a>
-                <a href="/signUp" class="p-2 text-soft-white bg-secondary-gray rounded-lg">Sign Up</a>
-            </div>
-        </div>
-    </body>
--->
+    <!--Revise method, action, and submit button. Maybe need to change page w/JavaScript after validation-->
+    <form method="post" action="getReady.html">
+        <section>
+            <label for="f_name">First Name</label><br>
+            <input type="text" id="f_name" name="f_name" required><br>
+    
+            <label for="l_name">Last Name</label><br>
+            <input type="text" id="l_name" name="l_name" required><br>
+    
+            <label for="email">Email</label><br>
+            <input type="email" id="email" name="email" required><br>
+            <small>Email should be in the format: user@example.com</small><br>
+    
+            <label for="username">Username</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <small>Username should be at least 8 characters long.</small><br>
+    
+            <label for="password">Password</label><br>
+            <input type="password" id="password" name="password" required><br>
+            <small>Password must contain at least one number, one uppercase letter, one lowercase letter, and be at least 8 characters long.</small><br>
+        </section>
 
+        <section>
+            <label for="windDownLength">Wind Down Length</label>
+            <input type="text" id="windDownLength" name="windDownLength"><br>
 
-<body class="flex min-h-dvh flex-col">
-    <div class="relative flex grow flex-col items-center justify-center mx-4">
+            <label for="sleepLength">Sleep Length</label>
+            <input type="text" id="sleepLength" name="sleepLength"><br>
+            
+            <label for="prepLength">Prep Length</label>
+            <input type="text" id="prepLength" name="prepLength"><br>
 
-        <header class="flex flex-col justify-center items-center mt-5">
-            <h2>Time Manager</h2>
-        </header>
+            <label for="showerLength">Shower Length</label>
+            <input type="text" id="showerLength" name="showerLength"><br>
 
-        <main class="relative flex w-full grow flex-col items-center justify-center mt-24">
+            <label for="getReadyLength">Get Ready Length</label>
+            <input type="text" id="getReadyLength" name="getReadyLength"><br>
 
-            <h1 class="font-semibold text-[32px]">Sign Up</h1>
+            <label for="fluffLength">Fluff Length</label>
+            <input type="text" id="fluffLength" name="fluffLength">
+        </section>
 
+<<<<<<< HEAD
             <div class="mt-10">
                 <div class="flex flex-col items-center max-w-96">
                     <form class="flex flex-col" method="post" action="getReady.html">
@@ -100,6 +121,17 @@
         </footer>
         
     </div>
+=======
+        <button type="button" id="signUp">Sign Up</button>
+        <button type="button" id="defaultLength">Default Lengths</button>
+        <input type="reset" value="Clear">
+        <!--
+            <a href="getReady.html">
+                <input type="submit" value="Sign Up">
+            </a>
+        -->
+    </form>
+>>>>>>> parent of 510afe8 (Styled Index, Login, and Signup)
 
     <script type="module" src="/static/js/script.js"></script>
 </body>

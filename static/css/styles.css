@@ -1,5 +1,6 @@
 @tailwind base;
 @tailwind components;
+<<<<<<< HEAD
 @tailwind utilities;
 
 body {
@@ -54,3 +55,6 @@ input:not(.btn-secondary) {
     @apply top-0 text-indigo-500 text-sm;
     transform: translateY(-100%);
 }
+=======
+@tailwind utilities;
+>>>>>>> parent of 510afe8 (Styled Index, Login, and Signup)
