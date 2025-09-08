@@ -25,16 +25,21 @@ export async function addUser(f_name, l_name, email, username, password) {
         }
         alert('User created successfully!');
         console.log(data);
-        return { valid: true, user_id: data.user_id };
+
+        // TO DO: Open session here!!!
+
+        window.location.href = '/createPreferences';
+        return { user_id: data.user_id };
     } catch (error) {
         console.error('Error:', error);
         alert('Error creating user');
-        return { valid: false, user_id: null };
+        return { user_id: null };
         // UI Error Handling
     };
 };
 
 export async function addPreferences(user_id, windDown, sleep, prep, shower, get_ready, fluff, date_created) {
+    
     fetch('/add_preferences', {
         method: 'POST',
         headers: {
@@ -91,6 +96,18 @@ export async function login(username, password) {
 export async function logout() {
     const response = await fetch('/logout', {
         method: 'POST',
+        credentials: 'include',
+    });
+    const data = await response.json();
+    console.log(data);
+    window.location.href = '/';
+};
+
+// TODO: Idk wtf im doing lmao im going to bed
+// Call function below to open a session upon successful user creation (Add User function)
+export async function openSession() {
+    const response = await fetch('/open_session', {
+        method: 'GET',
         credentials: 'include',
     });
     const data = await response.json();
@@ -275,10 +292,12 @@ export async function getUserID() {
         const data = await response.json();;
         console.log(data, typeof(data));
 
+        console.log(data);
+
         return data;
 
     } catch (error) {
-        console.error('Error fetching preferences:', error);
+        console.error('Error fetching User ID:', error);
         // UI Error Handling
         return { error: error.message };
     }

@@ -23,6 +23,10 @@ def index():
 def signUp():
     return render_template('signUp.html')
 
+@app.route('/createPreferences')
+def createPreferences():
+    return render_template('createPreferences.html')
+
 @app.route('/login')
 def login():
     return render_template('login.html')
@@ -122,6 +126,17 @@ def login_request():
 def logout():
     session.pop('user_id', None)
     return jsonify({"message": "Logged out successfully"})
+
+### TO DO: Idk wtf im doing lmao im going to bed
+@app.route('/open_session', methods=['GET'])
+def open_session():
+    data = request.get_json()
+    username = data.get('username')
+    
+    user = User.query.filter_by(username=username).first()
+    session['user_id'] = user.user_id
+
+    return jsonify({'message': 'Session created successfully'}), 200
 
 
 # Read
