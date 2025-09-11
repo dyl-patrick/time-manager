@@ -259,16 +259,16 @@ export function storeInput() {
 }
 
 export function displayOutput(taskName, tasks) {
-    const tableRows = tasks.map(task => `<tr><td>${task.name}</td><td>${task.time}</td></tr>`).join('');
+    const tableRows = tasks.map(task => `<tr><td class="px-3 py-2 whitespace-nowrap border border-gray-400">${task.name}</td><td class="px-3 py-2 whitespace-nowrap border border-gray-400">${task.time}</td></tr>`).join('');
 
     const htmlContent = `
-        <section>
-            <h2>${taskName}</h2>
-            <table>
+        <section class="flex flex-col w-full">
+            <h2 class="ml-5">${taskName}</h2>
+            <table class="m-5">
                 <thead>
                     <tr>
-                        <th>Task</th>
-                        <th>Time</th>
+                        <th class="px-3 py-2 whitespace-nowrap border border-gray-400">Task</th>
+                        <th class="px-3 py-2 whitespace-nowrap border border-gray-400"whitespace-nowrap border border-gray-400>Time</th>
                     </tr>
                 </thead>
                 <tbody>

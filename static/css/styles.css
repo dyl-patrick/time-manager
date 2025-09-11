@@ -26,6 +26,10 @@ input {
     @apply text-dark-grey mt-1 w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
 }
 
+nav a, .nav1 {
+    text-decoration: underline;
+}
+
 .btn-primary {
     @apply text-center p-2 bg-primary-blue rounded-lg;
 }
@@ -34,11 +38,11 @@ input {
     @apply text-center p-2 bg-secondary-gray rounded-lg;
 }
 
-.floating-label {
+.floating-label, .floating-label-get-ready {
     @apply relative;
 }
 
-.floating-label input {
+.floating-label input, .floating-label-get-ready input {
     @apply border-b-2 border-gray-300 focus:outline-none focus:border-indigo-500 placeholder-transparent;
     transition: all 0.3s ease;
 }
@@ -49,8 +53,16 @@ input {
     transform: translateY(-50%);
 }
 
+.floating-label-get-ready label {
+    @apply absolute left-3 text-gray-500 transition-all;
+    top: 45%;
+    transform: translateY(-30%);
+}
+
 .floating-label input:focus ~ label, 
-.floating-label input:not(:placeholder-shown) ~ label {
+.floating-label input:not(:placeholder-shown) ~ label,
+.floating-label-get-ready input:focus ~ label,
+.floating-label-get-ready input:not(:placeholder-shown) ~ label {
     @apply top-0 text-indigo-500 text-sm;
     transform: translateY(-100%);
 }

@@ -5,17 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile | Time Manager</title>
-    <!--<link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">-->
+    <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
 </head>
 <body>
-    <a href="/dashboard"><= Back to Get Ready</a>
-
+    <nav>
+        <a href="/dashboard"><= Back to Get Ready</a>
+    </nav>
+    
     <h1>Time Manager</h1>
     <h2>Profile</h2>
+    
 
-    <a href="/preferences">Preferences</a>
-    <a href="/event_history">Event History</a>
-    <button type="button" id="logout">Log Out</button>
+    <div class="nav1">
+        <a href="/preferences">Preferences</a>
+        <a href="/event_history">Event History</a>
+        <button type="button" id="logout">Log Out</button>
+    </div>
 
     <script type="module" src="/static/js/script.js"></script>
 </body>
