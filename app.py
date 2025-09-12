@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'  # For simplicity, using SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = b'\xfd\xba\x14\x9b\x80\x91\xbeO\xbdo\xa5\xfa\xf5\x1a\x8eJ\x99\xde\xd7\x0b\xf9\xa6\xbb\x05'
 db.init_app(app)
@@ -202,4 +202,4 @@ def delete_event(event_id):
     return jsonify(result), 200
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
