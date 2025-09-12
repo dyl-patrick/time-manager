@@ -288,6 +288,8 @@ export async function getEventHistory(userId) {
     const eventsContainer = document.getElementById('eventsContainer');
     eventsContainer.innerHTML = '';
 
+    console.log("getEventHistory");
+
     try {
         const response = await fetch(`/event_history/user/${userId}`);
         if (!response.ok) {
@@ -296,43 +298,50 @@ export async function getEventHistory(userId) {
         const events = await response.json();
 
         events.forEach(event => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mb-5 border-4 border-sky-900/50 rounded-xl';
+
             const row = document.createElement('div');
+            row.className = 'bg-sky-900/50 rounded-lg';
             row.innerHTML = `
-                <button class="collapsible">${event.name} on ${event.date}</button>
+                <button class="event max-h-14">${event.name} on ${event.date}</button>
                 <div class="content">
-                    <div>
-                        <p>Wind Down At: ${displayValue(event.o_wind_down)}</p>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Wind Down At:</span> ${displayValue(event.o_wind_down)}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Sleep At:</span> ${displayValue(event.o_sleep)}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Prep At:</span> ${event.o_prep}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Shower At:</span> ${displayValue(event.o_shower)}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Get Ready At:</span> ${displayValue(event.o_get_ready)}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Leave At:</span> ${event.o_leave}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Drive Time:</span> ${event.i_drive}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Arrive At:</span> ${amPmConversion(event.i_arrival)}</p>
+                    </div>
+                    <div class="pb-3">
+                        <p><span class="font-bold">Outcome:</span> ${displayValue(event.result)}</p>
                     </div>
                     <div>
-                        <p>Sleep At: ${displayValue(event.o_sleep)}</p>
-                    </div>
-                    <div>
-                        <p>Prep At: ${event.o_prep}</p>
-                    </div>
-                    <div>
-                        <p>Shower At: ${displayValue(event.o_shower)}</p>
-                    </div>
-                    <div>
-                        <p>Get Ready At: ${displayValue(event.o_get_ready)}</p>
-                    </div>
-                    <div>
-                        <p>Leave At: ${event.o_leave}</p>
-                    </div>
-                    <div>
-                        <p>Drive Time: ${event.i_drive}</p>
-                    </div>
-                    <div>
-                        <p>Arrive At: ${amPmConversion(event.i_arrival)}</p>
-                    </div>
-                    <div>
-                        <p>Outcome: ${displayValue(event.result)}</p>
-                    </div>
-                    <div>
-                        <p>Notes: ${displayValue(event.notes)}</p>
+                        <p><span class="font-bold">Notes:</span> ${displayValue(event.notes)}</p>
                     </div>
                 </div>
             `;
-            eventsContainer.appendChild(row);
+            
+            wrapper.appendChild(row);
+
+            eventsContainer.appendChild(wrapper);
         });
     } catch (error) {
         console.error('Error fetching events:', error);
@@ -355,58 +364,78 @@ export async function eventsByDate(userId, date) {
         console.log('Events fetched successfully:', events);
 
         events.forEach(event => {
+            const wrapper1 = document.createElement('div');
+            wrapper1.className = 'mb-20';
+
             const row = document.createElement('div');
             row.innerHTML = `
-                <h3>${event.name}</h3>
-                <button class="collapsible">${event.name} on ${event.date}</button>
-                <div class="content">
-                    <div>
-                        <p>Wind Down At: ${displayValue(event.o_wind_down)}</p>
-                    </div>
-                    <div>
-                        <p>Sleep At: ${displayValue(event.o_sleep)}</p>
-                    </div>
-                    <div>
-                        <p>Prep At: ${event.o_prep}</p>
-                    </div>
-                    <div>
-                        <p>Shower At: ${displayValue(event.o_shower)}</p>
-                    </div>
-                    <div>
-                        <p>Get Ready At: ${displayValue(event.o_get_ready)}</p>
-                    </div>
-                    <div>
-                        <p>Leave At: ${event.o_leave}</p>
-                    </div>
-                    <div>
-                        <p>Drive Time: ${event.i_drive}</p>
-                    </div>
-                    <div>
-                        <p>Arrive At: ${amPmConversion(event.i_arrival)}</p>
-                    </div>
-                    <div>
-                        <p>Outcome: ${displayValue(event.result)}</p>
-                    </div>
-                    <div>
-                        <p>Notes: ${displayValue(event.notes)}</p>
+                <h3 class="font-bold mb-3">${event.name}</h3>
+
+                <div class="border-4 border-sky-900/50 rounded-xl bg-sky-900/50">
+                    <button class="event max-h-14 rounded-xl">${event.name} on ${event.date}</button>
+                    
+                    <div class="content rounded-lg">
+                        <div class="pb-3">
+                            <p><span class="font-bold">Wind Down At:</span> ${displayValue(event.o_wind_down)}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Sleep At:</span> ${displayValue(event.o_sleep)}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Prep At:</span> ${event.o_prep}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Shower At:</span> ${displayValue(event.o_shower)}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Get Ready At:</span> ${displayValue(event.o_get_ready)}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Leave At:</span> ${event.o_leave}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Drive Time:</span> ${event.i_drive}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Arrive At:</span> ${amPmConversion(event.i_arrival)}</p>
+                        </div>
+                        <div class="pb-3">
+                            <p><span class="font-bold">Outcome:</span> ${displayValue(event.result)}</p>
+                        </div>
+                        <div>
+                            <p><span class="font-bold">Notes:</span> ${displayValue(event.notes)}</p>
+                        </div>
                     </div>
                 </div>
 
-                <div>
-                    <p>Outcome</p>
-                    <input type="radio" id="successful-${event.event_id}" name="outcome-${event.event_id}" value="true">
-                    <label for="successful-${event.event_id}">Successful</label><br>
-                    <input type="radio" id="unsuccessful-${event.event_id}" name="outcome-${event.event_id}" value="false">
-                    <label for="unsuccessful-${event.event_id}">Unsuccessful</label><br>
-                </div><br>
+                <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-y-3 w-full mt-5">
+                    <h4 class="col-span-3">Outcome</h4>
+
+                    <div class="flex">
+                        <label class="justify-self-start" for="successful-${event.event_id}">Successful</label><br>
+                        <input class="justify-self-center" type="radio" id="successful-${event.event_id}" name="outcome-${event.event_id}" value="true">
+                    </div>
+                    <div></div>
+
+                    <div></div>
+                    <div class="flex">
+                        <label class="justify-self-start" for="unsuccessful-${event.event_id}">Unsuccessful</label><br>
+                        <input class="justify-self-center" type="radio" id="unsuccessful-${event.event_id}" name="outcome-${event.event_id}" value="false">
+                    </div>
+                </div>
+                
+                <div class="floating-label-get-ready mt-9 mb-5">
+                    <input type="text" id="editNotes-${event.event_id}" name="editNotes" placeholder=" "><br>
+                    <label class="text-sm font-medium text-gray-700 absolute left-0 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-[52%] peer-focus:top-0 peer-focus:text-indigo-500 peer-focus:text-sm" for="editNotes-${event.event_id}">Add Notes</label>
+                </div>
             
-                <label for="editNotes-${event.event_id}">Add Notes</label>
-                <input type="text" id="editNotes-${event.event_id}" name="editNotes" placeholder=" "><br>
-            
-                <button type="button" id="submitChanges-${event.event_id}" class="submitChanges" data-event-id="${event.event_id}">Submit Changes</button>
-                <button type="button" id="deleteEvent-${event.event_id}" class="deleteEvent" data-event-id="${event.event_id}">Delete Event</button>
+                <div class="md:flex md:flex-row md:space-x-2">
+                    <button class="btn-primary mt-2 w-full submitChanges" type="button" id="submitChanges-${event.event_id}" data-event-id="${event.event_id}">Submit Changes</button>
+                    <button class="btn-secondary mt-2 w-full deleteEvent" type="button" id="deleteEvent-${event.event_id}" data-event-id="${event.event_id}">Delete Event</button>
+                </div>
             `;
-            eventEntries.appendChild(row);
+            wrapper1.appendChild(row);
+            eventEntries.appendChild(wrapper1);
         });
         console.log(events);
         return events;

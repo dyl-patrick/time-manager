@@ -9,40 +9,11 @@
         /*
         Collapsible
         */
-        .collapsible {
-        background-color: #777;
-        color: white;
-        cursor: pointer;
-        padding: 18px;
-        width: 100%;
-        border: none;
-        text-align: left;
-        outline: none;
-        font-size: 15px;
-        }
-
-        .active, .collapsible:hover {
-        background-color: #555;
-        }
-
-        .collapsible:after {
-        content: '\002B';
-        color: white;
-        font-weight: bold;
-        float: right;
-        margin-left: 5px;
-        }
-
-        .active:after {
-        content: "\2212";
-        }
 
         .content {
-        padding: 0 18px;
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.2s ease-out;
-        background-color: #f1f1f1;
         }
 
         /*
@@ -53,57 +24,48 @@
             padding: 10px;
             margin-top: 5px;
             width: 200px;
-            background-color: #f9f9f9;
         }
 
     </style>
     <title>Event History | Time Manager</title>
 </head>
-<body>
-    <nav>
-        <a href="/dashboard"><= Back to Get Ready</a>
-    </nav>
-    
-    <h1>Time Manager</h1>
-    <h2>Event History</h2>
+<body class="flex flex-col min-h-dvh">
 
-    <button type="button" id="edit">Edit Events</button>
-
-    <div class="toggleDiv" style="display: none;">
-        <div id="dateSelector">
-            <input type="date" id="selectDate" name="selectDate" placeholder=" ">
-            <label for="selectDate">Select Event Date</label><br>
-    
-            <button type="button" id="requestDates">Find Events</button>
-        </div>
-        
-        <div id="eventEntries">
-            <h3>Name of Event</h3>
-        
-            <div>
-                <p>Result</p>
-                <input type="radio" id="successful" name="outcome" value="true">
-                <label for="successful">Successful</label><br>
-                <input type="radio" id="unsuccessful" name="outcome" value="false">
-                <label for="unsuccessful">Unsuccessful</label><br>
-            </div><br>
-        
-            <div>
-                <label for="editNotes">Add Notes</label>
-                <input type="text" id="editNotes" name="editNotes" placeholder=" ">
-            </div><br>
-        
-            <button type="button" id="submitChanges">Submit Changes</button>
-            <button type="button" id="deleteEvent">Delete Event</button>
-        </div>
+    <div class="relative flex grow flex-col items-center justify-center mx-4">
+        <nav class="flex justify-between items-center w-full h-11">
+            <header>
+                <h2>Time Manager</h2>
+            </header>
+            <a href="/dashboard">Back</a>
+        </nav>
     </div>
 
+    <main class="relative flex w-full grow flex-col items-center mt-10">
+        <h1 class="font-semibold text-[32px]">Event History</h1>
+        <button class="mt-2.5 underline mb-10" type="button" id="edit">Edit Events</button>
     
+        <div class="toggleDiv w-1/2" style="display: none;">
+            <div class="mb-7" id="dateSelector">
+                <div class="floating-label-get-ready">
+                    <input type="date" id="selectDate" name="selectDate" placeholder=" ">
+                    <label for="selectDate">Event Date</label><br>
+                </div>
+        
+                <button class="btn-primary mt-2 w-full" type="button" id="requestDates">Find Events</button>
+            </div>
+            
+            <div id="eventEntries">
+                
+
+            </div>
+        </div>
+    
+        <div class="w-1/2" id="eventsContainer">
     
 
-    <div id="eventsContainer">
+        </div>
+    </main>
 
-    </div>
 
     <script type="module" src="/static/js/script.js"></script>
 </body>

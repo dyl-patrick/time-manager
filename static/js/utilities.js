@@ -52,7 +52,7 @@ export function toggleButton() {
 };
 
 export function collapsibleEvent() {
-    var coll = document.getElementsByClassName("collapsible");
+    var coll = document.getElementsByClassName("event");
     var i;
     
     for (i = 0; i < coll.length; i++) {
@@ -60,9 +60,11 @@ export function collapsibleEvent() {
         this.classList.toggle("active");
         var content = this.nextElementSibling;
         if (content.style.maxHeight){
-          content.style.maxHeight = null;
+            content.style.maxHeight = null;
+            content.classList.remove('p-5');
         } else {
-          content.style.maxHeight = content.scrollHeight + "px";
+            content.classList.add('p-5');
+            content.style.maxHeight = content.scrollHeight + "px";
         } 
       });
     };

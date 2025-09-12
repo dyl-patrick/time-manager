@@ -7,19 +7,28 @@
     <title>Profile | Time Manager</title>
     <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
 </head>
-<body>
-    <nav>
-        <a href="/dashboard"><= Back to Get Ready</a>
-    </nav>
-    
-    <h1>Time Manager</h1>
-    <h2>Profile</h2>
-    
+<body class="flex min-h-dvh">
 
-    <div class="nav1">
-        <a href="/preferences">Preferences</a>
-        <a href="/event_history">Event History</a>
-        <button type="button" id="logout">Log Out</button>
+    <div class="relative flex grow flex-col items-center justify-center mx-4">
+        <nav class="flex justify-between items-center w-full h-[5%]">
+            <header>
+                <h2>Time Manager</h2>
+            </header>
+            <a href="/dashboard">Back</a>
+        </nav>
+    
+        
+        <main class="relative flex w-full grow flex-col items-center mt-10">
+            <h1 class="font-semibold text-[32px]">Profile</h1>
+            
+            <div class="mt-10 w-1/2 min-w-52">
+                <div class="flex flex-col items-center md:max-w-2xl">
+                    <a class="btn-primary mt-2 w-full" href="/preferences">Preferences</a>
+                    <a class="btn-primary mt-2 w-full" href="/event_history">Event History</a>
+                    <button class="btn-secondary mt-2 w-full" type="button" id="logout">Log Out</button>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script type="module" src="/static/js/script.js"></script>

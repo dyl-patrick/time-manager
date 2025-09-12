@@ -66,3 +66,37 @@ nav a, .nav1 {
     @apply top-0 text-indigo-500 text-sm;
     transform: translateY(-100%);
 }
+
+/*
+Event History Page
+*/
+
+.event {
+    @apply text-white;
+    @apply cursor-pointer;
+    @apply p-4;
+    @apply w-full;
+    @apply border-none;
+    @apply text-left;
+    @apply outline-none;
+    @apply text-base;
+    @apply bg-sky-700/75;
+    @apply rounded-lg;
+}
+
+.active, .event:hover {
+    @apply bg-sky-500;
+    @apply rounded-lg;
+}
+
+.event:after {
+    @apply font-bold;
+    @apply float-right;
+    @apply mr-1;
+    content: '\002B';
+}
+
+.active:after {
+    content: "\2212";
+    @apply border-sky-900;
+}
